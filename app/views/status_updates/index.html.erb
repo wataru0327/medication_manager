@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Status updates</h1>
+
+<div id="status_updates">
+  <% @status_updates.each do |status_update| %>
+    <%= render status_update %>
+    <p>
+      <%= link_to "Show this status update", status_update %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New status update", new_status_update_path %>

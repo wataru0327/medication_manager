@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @status_update %>
+
+<div>
+  <%= link_to "Edit this status update", edit_status_update_path(@status_update) %> |
+  <%= link_to "Back to status updates", status_updates_path %>
+
+  <%= button_to "Destroy this status update", @status_update, method: :delete %>
+</div>
