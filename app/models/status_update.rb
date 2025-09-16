@@ -1,0 +1,2 @@
+class StatusUpdate < ApplicationRecord
+end

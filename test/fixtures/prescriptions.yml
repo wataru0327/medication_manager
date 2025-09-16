@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  patient_id: 1
+  doctor_id: 1
+  issued_at: 2025-09-16 16:36:47
+  expires_at: 2025-09-16 16:36:47
+  qr_token: MyString
+
+two:
+  patient_id: 1
+  doctor_id: 1
+  issued_at: 2025-09-16 16:36:47
+  expires_at: 2025-09-16 16:36:47
+  qr_token: MyString
