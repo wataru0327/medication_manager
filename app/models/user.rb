@@ -1,4 +1,8 @@
 class User < ApplicationRecord
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
   enum role: { doctor: 0, pharmacy: 1, patient: 2 }
 
   has_many :prescriptions, foreign_key: :doctor_id, dependent: :destroy, inverse_of: :doctor

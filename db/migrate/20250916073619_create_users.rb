@@ -1,13 +1,12 @@
-class CreateUsers < ActiveRecord::Migration[7.1]
-  def change
-    create_table :users do |t|
-      t.string :name, null: false
-      t.string :email, null: false
-      t.integer :role, null: false # enum (doctor, pharmacy, patient)
+class User < ApplicationRecord
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
 
-      t.timestamps
-    end
+  enum role: { doctor: 0, pharmacy: 1, patient: 2 }
 
-    add_index :users, :email, unique: true
-  end
+  has_many :prescriptions, foreign_key: :doctor_id, class_name: "Prescription"
+  has_many :prescriptions_as_patient, foreign_key: :patient_id, class_name: "Prescription"
+  has_many :status_updates, foreign_key: :pharmacy_id
 end
+
+
