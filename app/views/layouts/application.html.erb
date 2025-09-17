@@ -1,16 +1,42 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>MedicationManager</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Medication Manager</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= yield %>
+    <header class="navbar">
+      <div class="container">
+        <h1 class="logo">💊 Medication Manager</h1>
+        <ul class="nav-links">
+          <li><%= link_to "処方箋", prescriptions_path %></li>
+          <li><%= link_to "薬", medications_path %></li>
+          <li><%= link_to "ステータス", status_updates_path %></li>
+
+          <% if user_signed_in? %>
+            <li><%= link_to "ログアウト", destroy_user_session_path, method: :delete %></li>
+          <% else %>
+            <li><%= link_to "ログイン", new_user_session_path %></li>
+            <li><%= link_to "サインアップ", new_user_registration_path %></li>
+          <% end %>
+        </ul>
+      </div>
+    </header>
+
+    <div class="container">
+      <% if notice %>
+        <p class="alert notice"><%= notice %></p>
+      <% end %>
+      <% if alert %>
+        <p class="alert alert-danger"><%= alert %></p>
+      <% end %>
+
+      <%= yield %>
+    </div>
   </body>
 </html>
+
+
