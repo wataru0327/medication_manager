@@ -4,7 +4,9 @@
     <title>Medication Manager</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %> <!-- Turbo + Stimulus を正しく読み込む -->
   </head>
 
   <body>
@@ -17,10 +19,13 @@
           <li><%= link_to "ステータス", status_updates_path %></li>
 
           <% if user_signed_in? %>
-            <li><%= link_to "ログアウト", destroy_user_session_path, method: :delete %></li>
+            <li>
+              <%= link_to "ログアウト", destroy_user_session_path,
+                          data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" } %>
+            </li>
           <% else %>
             <li><%= link_to "ログイン", new_user_session_path %></li>
-            <li><%= link_to "サインアップ", new_user_registration_path %></li>
+            <li><%= link_to "新規登録", new_user_registration_path %></li>
           <% end %>
         </ul>
       </div>
@@ -38,5 +43,11 @@
     </div>
   </body>
 </html>
+
+
+
+
+
+
 
 

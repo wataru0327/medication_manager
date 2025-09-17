@@ -1,6 +1,11 @@
 ja:
   hello: "こんにちは"
 
+  roles:
+    doctor: "医師"
+    pharmacy: "薬局"
+    patient: "患者"
+
   date:
     formats:
       default: "%Y-%m-%d"
@@ -16,4 +21,21 @@ ja:
   time:
     formats:
       default: "%Y-%m-%d %H:%M"
+
+  devise:
+    registrations:
+      signed_up: "アカウント登録が完了しました。ようこそ！"
+      updated: "アカウント情報を更新しました。"
+      destroyed: "アカウントを削除しました。またのご利用をお待ちしています。"
+    sessions:
+      signed_in: "ログインしました。"
+      signed_out: "ログアウトしました。"
+    passwords:
+      send_instructions: "パスワード再設定の案内メールを送信しました。"
+      updated: "パスワードを変更しました。"
+    failure:
+      invalid: "メールアドレスまたはパスワードが正しくありません。"
+      unauthenticated: "ログインしてください。"
+
+
 

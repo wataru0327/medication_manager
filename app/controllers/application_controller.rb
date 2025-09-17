@@ -1,15 +1,15 @@
 class ApplicationController < ActionController::Base
-  # Deviseで追加カラムを許可
+  # Devise コントローラの場合のみ追加パラメータを許可
   before_action :configure_permitted_parameters, if: :devise_controller?
 
-  # ログイン後のリダイレクト先
+  # ログイン後のリダイレクト先を指定
   def after_sign_in_path_for(resource)
-    prescriptions_path  # ログイン後に処方箋一覧へ
+    prescriptions_path # ログイン後は処方箋一覧へ
   end
 
   protected
 
-  # name と role を許可する
+  # Deviseで追加したカラムを許可
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :role])
     devise_parameter_sanitizer.permit(:account_update, keys: [:name, :role])
