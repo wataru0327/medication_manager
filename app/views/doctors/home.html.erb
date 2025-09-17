@@ -1,0 +1,10 @@
+<!-- app/views/doctors/home.html.erb -->
+<h1>医師用トップページ</h1>
+
+<ul>
+  <li><%= link_to "薬の登録", new_medication_path %></li>
+  <li><%= link_to "処方箋作成", new_prescription_path %></li>
+  <li><%= link_to "薬一覧", medications_path %></li>
+  <li><%= link_to "処方箋一覧", prescriptions_path %></li>
+</ul>
+

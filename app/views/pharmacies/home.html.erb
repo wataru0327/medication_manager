@@ -1,0 +1,9 @@
+<h1>薬局トップページ</h1>
+
+<p><%= current_user.name %> さん、ようこそ！</p>
+
+<ul>
+  <li><%= link_to "処方箋一覧を見る", prescriptions_path %></li>
+  <li><%= link_to "ステータス更新一覧を見る", status_updates_path %></li>
+</ul>
+
