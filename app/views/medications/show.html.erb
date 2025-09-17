@@ -1,10 +1,44 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @medication %>
+<h1>薬の詳細</h1>
+
+<table>
+  <tr>
+    <th>ID</th>
+    <td><%= @medication.id %></td>
+  </tr>
+  <tr>
+    <th>処方箋ID</th>
+    <td><%= @medication.prescription_id %></td>
+  </tr>
+  <tr>
+    <th>薬名</th>
+    <td><%= @medication.name %></td>
+  </tr>
+  <tr>
+    <th>用量</th>
+    <td><%= @medication.dosage %></td>
+  </tr>
+  <tr>
+    <th>服用タイミング</th>
+    <td>
+      <%= case @medication.timing
+          when "morning"  then "朝"
+          when "noon"     then "昼"
+          when "evening"  then "夕方"
+          when "bedtime"  then "就寝前"
+          else @medication.timing
+          end %>
+    </td>
+  </tr>
+</table>
+
+<hr>
 
 <div>
-  <%= link_to "Edit this medication", edit_medication_path(@medication) %> |
-  <%= link_to "Back to medications", medications_path %>
-
-  <%= button_to "Destroy this medication", @medication, method: :delete %>
+  <%= link_to "編集", edit_medication_path(@medication) %> |
+  <%= link_to "薬一覧に戻る", medications_path %> |
+  <%= button_to "削除", @medication, method: :delete, data: { confirm: "本当に削除しますか？" } %>
 </div>
+
+

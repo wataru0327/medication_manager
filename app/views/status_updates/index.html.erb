@@ -1,14 +1,47 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>Status updates</h1>
+<h1>ステータス一覧</h1>
 
-<div id="status_updates">
-  <% @status_updates.each do |status_update| %>
-    <%= render status_update %>
-    <p>
-      <%= link_to "Show this status update", status_update %>
-    </p>
-  <% end %>
-</div>
+<table border="1" cellpadding="5" cellspacing="0">
+  <thead style="background-color: #f0f0f0;">
+    <tr>
+      <th>ID</th>
+      <th>処方箋ID</th>
+      <th>薬局</th>
+      <th>ステータス</th>
+      <th>更新日時</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @status_updates.each do |status_update| %>
+      <tr>
+        <td><%= status_update.id %></td>
+        <td><%= status_update.prescription_id %></td>
+        <td><%= status_update.pharmacy&.name %></td>
+        <td>
+          <%=
+            case status_update.status
+            when "pending" then "受付中"
+            when "processing" then "調剤中"
+            when "completed" then "受け渡し済み"
+            else status_update.status
+            end
+          %>
+        </td>
+        <td><%= status_update.updated_at.strftime("%Y-%m-%d %H:%M") %></td>
+        <td>
+          <%= link_to "詳細", status_update %> |
+          <%= link_to "編集", edit_status_update_path(status_update) %> |
+          <%= button_to "削除", status_update, method: :delete, data: { confirm: "本当に削除しますか？" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
-<%= link_to "New status update", new_status_update_path %>
+<br>
+
+<%= link_to "＋ 新規ステータスを作成", new_status_update_path, style: "font-weight: bold;" %>
+
+

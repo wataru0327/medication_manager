@@ -1,32 +1,42 @@
-<%= form_with(model: status_update) do |form| %>
+<%= form_with(model: status_update, local: true) do |form| %>
   <% if status_update.errors.any? %>
     <div style="color: red">
-      <h2><%= pluralize(status_update.errors.count, "error") %> prohibited this status_update from being saved:</h2>
-
+      <h2><%= status_update.errors.count %> 件のエラーがあります:</h2>
       <ul>
-        <% status_update.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+        <% status_update.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
   <div>
-    <%= form.label :prescription_id, style: "display: block" %>
-    <%= form.text_field :prescription_id %>
+    <%= form.label :prescription_id, "処方箋" %><br>
+    <%= form.collection_select :prescription_id, Prescription.all, :id, :id, prompt: "処方箋を選択してください" %>
   </div>
 
   <div>
-    <%= form.label :pharmacy_id, style: "display: block" %>
-    <%= form.text_field :pharmacy_id %>
+    <%= form.label :pharmacy_id, "薬局" %><br>
+    <%= form.collection_select :pharmacy_id, User.where(role: :pharmacy), :id, :name, prompt: "薬局を選択してください" %>
   </div>
 
   <div>
-    <%= form.label :status, style: "display: block" %>
-    <%= form.number_field :status %>
+    <%= form.label :status, "ステータス" %><br>
+    <%= form.select :status,
+          StatusUpdate.statuses.keys.map { |s|
+            [ case s
+                when "pending" then "受付中"
+                when "processing" then "調剤中"
+                when "completed" then "受け渡し済み"
+              end, s ]
+          },
+          prompt: "ステータスを選択してください" %>
   </div>
 
+  <br>
+
   <div>
-    <%= form.submit %>
+    <%= form.submit "保存する" %>
   </div>
 <% end %>
+

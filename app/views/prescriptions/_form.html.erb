@@ -1,42 +1,88 @@
-<%= form_with(model: prescription) do |form| %>
+<%= form_with(model: prescription, local: true) do |form| %>
   <% if prescription.errors.any? %>
     <div style="color: red">
-      <h2><%= pluralize(prescription.errors.count, "error") %> prohibited this prescription from being saved:</h2>
-
+      <h2><%= prescription.errors.count %> 件のエラーにより保存できませんでした:</h2>
       <ul>
-        <% prescription.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+        <% prescription.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
   <div>
-    <%= form.label :patient_id, style: "display: block" %>
-    <%= form.text_field :patient_id %>
+    <%= form.label :patient_id, "患者" %><br>
+    <%= form.collection_select :patient_id, User.where(role: :patient), :id, :name, prompt: "患者を選択してください" %>
   </div>
 
   <div>
-    <%= form.label :doctor_id, style: "display: block" %>
-    <%= form.text_field :doctor_id %>
+    <%= form.label :doctor_id, "医師" %><br>
+    <%= form.collection_select :doctor_id, User.where(role: :doctor), :id, :name, prompt: "医師を選択してください" %>
   </div>
 
   <div>
-    <%= form.label :issued_at, style: "display: block" %>
-    <%= form.datetime_field :issued_at %>
+    <%= form.label :issued_at, "発行日" %><br>
+    <%= form.datetime_select :issued_at %>
   </div>
 
   <div>
-    <%= form.label :expires_at, style: "display: block" %>
-    <%= form.datetime_field :expires_at %>
+    <%= form.label :expires_at, "有効期限" %><br>
+    <%= form.datetime_select :expires_at %>
   </div>
 
   <div>
-    <%= form.label :qr_token, style: "display: block" %>
-    <%= form.text_field :qr_token %>
+    <%= form.label :qr_token, "QRトークン" %><br>
+    <%= form.text_field :qr_token, value: prescription.qr_token || SecureRandom.uuid %>
   </div>
 
+  <br>
+
   <div>
-    <%= form.submit %>
+    <%= form.submit "登録する" %>
   </div>
 <% end %>
+<%= form_with(model: prescription, local: true) do |form| %>
+  <% if prescription.errors.any? %>
+    <div style="color: red">
+      <h2><%= prescription.errors.count %> 件のエラーにより保存できませんでした:</h2>
+      <ul>
+        <% prescription.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :patient_id, "患者" %><br>
+    <%= form.collection_select :patient_id, User.where(role: :patient), :id, :name, prompt: "患者を選択してください" %>
+  </div>
+
+  <div>
+    <%= form.label :doctor_id, "医師" %><br>
+    <%= form.collection_select :doctor_id, User.where(role: :doctor), :id, :name, prompt: "医師を選択してください" %>
+  </div>
+
+  <div>
+    <%= form.label :issued_at, "発行日" %><br>
+    <%= form.datetime_select :issued_at %>
+  </div>
+
+  <div>
+    <%= form.label :expires_at, "有効期限" %><br>
+    <%= form.datetime_select :expires_at %>
+  </div>
+
+  <div>
+    <%= form.label :qr_token, "QRトークン" %><br>
+    <%= form.text_field :qr_token, value: prescription.qr_token || SecureRandom.uuid %>
+  </div>
+
+  <br>
+
+  <div>
+    <%= form.submit "登録する" %>
+  </div>
+<% end %>
+
+

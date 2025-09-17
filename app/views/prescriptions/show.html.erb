@@ -1,10 +1,66 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @prescription %>
+<h1>処方箋の詳細</h1>
+
+<table>
+  <tr>
+    <th>患者</th>
+    <td><%= @prescription.patient.name %></td>
+  </tr>
+  <tr>
+    <th>医師</th>
+    <td><%= @prescription.doctor.name %></td>
+  </tr>
+  <tr>
+    <th>発行日</th>
+    <td><%= @prescription.issued_at.strftime("%Y年%m月%d日") %></td>
+  </tr>
+  <tr>
+    <th>有効期限</th>
+    <td><%= @prescription.expires_at.strftime("%Y年%m月%d日") %></td>
+  </tr>
+  <tr>
+    <th>QRトークン</th>
+    <td><%= @prescription.qr_token %></td>
+  </tr>
+</table>
+
+<hr>
+
+<h2>処方された薬</h2>
+<% if @prescription.medications.any? %>
+  <ul>
+    <% @prescription.medications.each do |med| %>
+      <li><%= med.name %> - <%= med.dosage %> - <%= med.timing %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>登録された薬はありません。</p>
+<% end %>
+
+<hr>
+
+<h2>ステータス更新履歴</h2>
+<% if @prescription.status_updates.any? %>
+  <ul>
+    <% @prescription.status_updates.each do |status| %>
+      <li>
+        <%= status.pharmacy.name %>： 
+        <%= status.status %> 
+        (<%= status.created_at.strftime("%Y年%m月%d日 %H:%M") %>)
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>ステータス更新はまだありません。</p>
+<% end %>
+
+<hr>
 
 <div>
-  <%= link_to "Edit this prescription", edit_prescription_path(@prescription) %> |
-  <%= link_to "Back to prescriptions", prescriptions_path %>
-
-  <%= button_to "Destroy this prescription", @prescription, method: :delete %>
+  <%= link_to "この処方箋を編集", edit_prescription_path(@prescription) %> |
+  <%= link_to "処方箋一覧へ戻る", prescriptions_path %> |
+  <%= button_to "この処方箋を削除", @prescription, method: :delete, data: { turbo_confirm: "本当に削除しますか？" } %>
 </div>
+
+

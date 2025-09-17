@@ -1,14 +1,39 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>Prescriptions</h1>
+<h1>処方箋一覧</h1>
 
-<div id="prescriptions">
-  <% @prescriptions.each do |prescription| %>
-    <%= render prescription %>
-    <p>
-      <%= link_to "Show this prescription", prescription %>
-    </p>
-  <% end %>
-</div>
+<table border="1" cellpadding="6" cellspacing="0">
+  <thead>
+    <tr>
+      <th>患者</th>
+      <th>医師</th>
+      <th>発行日</th>
+      <th>有効期限</th>
+      <th>QRトークン</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @prescriptions.each do |prescription| %>
+      <tr>
+        <td><%= prescription.patient&.name %></td>
+        <td><%= prescription.doctor&.name %></td>
+        <td><%= prescription.issued_at.strftime("%Y-%m-%d") if prescription.issued_at %></td>
+        <td><%= prescription.expires_at.strftime("%Y-%m-%d") if prescription.expires_at %></td>
+        <td><%= prescription.qr_token %></td>
+        <td>
+          <%= link_to "詳細", prescription %> |
+          <%= link_to "編集", edit_prescription_path(prescription) %> |
+          <%= button_to "削除", prescription, method: :delete, data: { confirm: "本当に削除しますか？" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
-<%= link_to "New prescription", new_prescription_path %>
+<br>
+
+<%= link_to "新しい処方箋を作成", new_prescription_path %>
+
+
+

@@ -1,37 +1,50 @@
-<%= form_with(model: medication) do |form| %>
+<%= form_with(model: medication, local: true) do |form| %>
   <% if medication.errors.any? %>
     <div style="color: red">
-      <h2><%= pluralize(medication.errors.count, "error") %> prohibited this medication from being saved:</h2>
-
+      <h2><%= medication.errors.count %>件のエラーにより保存できませんでした:</h2>
       <ul>
-        <% medication.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+        <% medication.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
   <div>
-    <%= form.label :prescription_id, style: "display: block" %>
-    <%= form.text_field :prescription_id %>
+    <%= form.label :prescription_id, "処方箋" %><br>
+    <%= form.collection_select :prescription_id, Prescription.all, :id, :id, prompt: "処方箋を選択してください" %>
   </div>
 
   <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
+    <%= form.label :name, "薬名" %><br>
+    <%= form.text_field :name, placeholder: "例: 胃薬" %>
   </div>
 
   <div>
-    <%= form.label :dosage, style: "display: block" %>
-    <%= form.text_field :dosage %>
+    <%= form.label :dosage, "用量" %><br>
+    <%= form.text_field :dosage, placeholder: "例: 1錠" %>
   </div>
 
   <div>
-    <%= form.label :timing, style: "display: block" %>
-    <%= form.number_field :timing %>
+    <%= form.label :timing, "服用タイミング" %><br>
+    <%= form.select :timing,
+          Medication.timings.keys.map { |t|
+            case t
+            when "morning"  then ["朝", t]
+            when "noon"     then ["昼", t]
+            when "evening"  then ["夕方", t]
+            when "bedtime"  then ["就寝前", t]
+            else [t, t]
+            end
+          },
+          prompt: "タイミングを選択してください" %>
   </div>
 
+  <br>
+
   <div>
-    <%= form.submit %>
+    <%= form.submit "保存する" %>
   </div>
 <% end %>
+
+

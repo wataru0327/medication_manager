@@ -1,14 +1,45 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>Medications</h1>
+<h1>薬一覧</h1>
 
-<div id="medications">
-  <% @medications.each do |medication| %>
-    <%= render medication %>
-    <p>
-      <%= link_to "Show this medication", medication %>
-    </p>
-  <% end %>
-</div>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>処方箋ID</th>
+      <th>薬名</th>
+      <th>用量</th>
+      <th>服用タイミング</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @medications.each do |medication| %>
+      <tr>
+        <td><%= medication.id %></td>
+        <td><%= medication.prescription_id %></td>
+        <td><%= medication.name %></td>
+        <td><%= medication.dosage %></td>
+        <td>
+          <%= case medication.timing
+              when "morning"  then "朝"
+              when "noon"     then "昼"
+              when "evening"  then "夕方"
+              when "bedtime"  then "就寝前"
+              else medication.timing
+              end %>
+        </td>
+        <td>
+          <%= link_to "詳細", medication %> |
+          <%= link_to "編集", edit_medication_path(medication) %> |
+          <%= button_to "削除", medication, method: :delete, data: { confirm: "本当に削除しますか？" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
-<%= link_to "New medication", new_medication_path %>
+<br>
+
+<%= link_to "新規薬を追加", new_medication_path %>
+
