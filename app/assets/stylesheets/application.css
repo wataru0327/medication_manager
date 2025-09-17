@@ -120,6 +120,25 @@ form input[type="submit"]:hover {
   background: #0056b3;
 }
 
+/* セレクト統一（常に下矢印を表示して下に開くように見せる） */
+select {
+  appearance: none;        /* ブラウザ独自UIを無効化 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><polygon points='0,0 12,0 6,8' style='fill:%23333;'/></svg>") no-repeat right 10px center;
+  background-size: 12px 8px;
+  cursor: pointer;
+}
+
+select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
 /* ボタン */
 button, .btn {
   padding: 8px 16px;
