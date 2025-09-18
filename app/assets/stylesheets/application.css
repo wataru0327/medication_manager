@@ -171,3 +171,41 @@ button, .btn {
   background-color: #f8d7da;
   color: #721c24;
 }
+
+.role-selection {
+  display: flex;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.role-box {
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 30%;
+  text-align: center;
+}
+
+.role-box h2 {
+  margin-bottom: 15px;
+}
+
+.btn {
+  display: inline-block;
+  margin: 5px 0;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+

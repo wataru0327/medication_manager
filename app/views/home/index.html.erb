@@ -1,0 +1,23 @@
+<h1>ようこそ Medication Manager</h1>
+<p>ご自身の役割を選んでください</p>
+
+<div class="role-selection">
+  <div class="role-box">
+    <h2>患者の方はこちらから</h2>
+    <%= link_to "新規登録", new_user_registration_path(role: :patient), class: "btn" %>
+    <%= link_to "ログイン", new_user_session_path, class: "btn" %>
+  </div>
+
+  <div class="role-box">
+    <h2>医師の方はこちらから</h2>
+    <%= link_to "新規登録", new_user_registration_path(role: :doctor), class: "btn" %>
+    <%= link_to "ログイン", new_user_session_path, class: "btn" %>
+  </div>
+
+  <div class="role-box">
+    <h2>薬局の方はこちらから</h2>
+    <%= link_to "新規登録", new_user_registration_path(role: :pharmacy), class: "btn" %>
+    <%= link_to "ログイン", new_user_session_path, class: "btn" %>
+  </div>
+</div>
+

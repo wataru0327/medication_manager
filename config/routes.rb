@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'home/index'
   devise_for :users
 
   # 各リソース
@@ -7,19 +8,16 @@ Rails.application.routes.draw do
   resources :prescriptions
 
   # 各ロール専用トップページ
-  get "patients/home", to: "patients#home", as: :patient_home
-  get "doctors/home",  to: "doctors#home",  as: :doctor_home
+  get "patients/home",   to: "patients#home",   as: :patient_home
+  get "doctors/home",    to: "doctors#home",    as: :doctor_home
   get "pharmacies/home", to: "pharmacies#home", as: :pharmacy_home
 
-  # ログインしていない場合はログイン画面へ
-  devise_scope :user do
-    unauthenticated do
-      root to: "devise/sessions#new", as: :unauthenticated_root
-    end
-  end
+  # アプリ全体のトップページ（ロール選択画面）
+  root "home#index"
 
   # ヘルスチェック用
   get "up" => "rails/health#show", as: :rails_health_check
 end
+
 
 
