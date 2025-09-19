@@ -66,6 +66,12 @@ a:hover {
   text-decoration: underline;
 }
 
+/* ナビゲーションのユーザー名 */
+.nav-links .user-name {
+  font-weight: bold;
+  color: white;
+}
+
 /* テーブル */
 table {
   width: 100%;
@@ -120,9 +126,26 @@ form input[type="submit"]:hover {
   background: #0056b3;
 }
 
-/* セレクト統一（常に下矢印を表示して下に開くように見せる） */
+/* ✅ チェックボックスの整列 */
+.field.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* チェックボックスと文字の間隔 */
+}
+
+.field.remember-me input[type="checkbox"] {
+  width: auto; /* チェックボックスを小さいままに */
+}
+
+.field.remember-me label {
+  font-weight: normal; /* 太字解除（他と揃えたい場合は調整可） */
+  margin: 0;
+  display: inline;
+}
+
+/* セレクト統一 */
 select {
-  appearance: none;        /* ブラウザ独自UIを無効化 */
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
 
@@ -172,6 +195,7 @@ button, .btn {
   color: #721c24;
 }
 
+/* ロール選択画面 */
 .role-selection {
   display: flex;
   gap: 30px;
@@ -209,8 +233,4 @@ button, .btn {
   color: white;
 }
 
-.nav-links .user-name {
-  font-weight: bold; 
-  color: white; 
-}
 
