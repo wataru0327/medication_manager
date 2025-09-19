@@ -8,10 +8,6 @@
     <td><%= @medication.id %></td>
   </tr>
   <tr>
-    <th>処方箋ID</th>
-    <td><%= @medication.prescription_id %></td>
-  </tr>
-  <tr>
     <th>薬名</th>
     <td><%= @medication.name %></td>
   </tr>
@@ -23,13 +19,40 @@
     <th>服用タイミング</th>
     <td>
       <%= case @medication.timing
-          when "morning"  then "朝"
-          when "noon"     then "昼"
-          when "evening"  then "夕方"
-          when "bedtime"  then "就寝前"
+          when "morning"    then "朝"
+          when "noon"       then "昼"
+          when "evening"    then "夕方"
+          when "bedtime"    then "就寝前"
+          when "after_meal" then "毎食後"
           else @medication.timing
           end %>
     </td>
+  </tr>
+  <tr>
+    <th>用途</th>
+    <td>
+      <%= case @medication.purpose
+          when "antipyretic" then "解熱"
+          when "analgesic"   then "鎮痛"
+          when "stomach"     then "胃薬"
+          when "antibiotic"  then "抗生物質"
+          else "未設定"
+          end %>
+    </td>
+  </tr>
+  <tr>
+    <th>画像</th>
+    <td>
+      <% if @medication.image.attached? %>
+        <%= image_tag @medication.image, width: 200 %>
+      <% else %>
+        なし
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <th>備考</th>
+    <td><%= @medication.note.presence || "なし" %></td>
   </tr>
 </table>
 
@@ -40,5 +63,6 @@
   <%= link_to "薬一覧に戻る", medications_path %> |
   <%= button_to "削除", @medication, method: :delete, data: { confirm: "本当に削除しますか？" } %>
 </div>
+
 
 

@@ -10,14 +10,15 @@
     </div>
   <% end %>
 
+  <!-- 薬の画像 -->
   <div>
-    <%= form.label :prescription_id, "処方箋" %><br>
-    <%= form.collection_select :prescription_id, Prescription.all, :id, :id, prompt: "処方箋を選択してください" %>
+    <%= form.label :image, "薬の画像" %><br>
+    <%= form.file_field :image, accept: "image/*" %>
   </div>
 
   <div>
     <%= form.label :name, "薬名" %><br>
-    <%= form.text_field :name, placeholder: "例: 胃薬" %>
+    <%= form.text_field :name, placeholder: "例: ロキソニン" %>
   </div>
 
   <div>
@@ -25,19 +26,42 @@
     <%= form.text_field :dosage, placeholder: "例: 1錠" %>
   </div>
 
+  <!-- 服用タイミング -->
   <div>
     <%= form.label :timing, "服用タイミング" %><br>
     <%= form.select :timing,
           Medication.timings.keys.map { |t|
             case t
-            when "morning"  then ["朝", t]
-            when "noon"     then ["昼", t]
-            when "evening"  then ["夕方", t]
-            when "bedtime"  then ["就寝前", t]
-            else [t, t]
+            when "morning"    then ["朝", t]
+            when "noon"       then ["昼", t]
+            when "evening"    then ["夕方", t]
+            when "bedtime"    then ["就寝前", t]
+            when "after_meal" then ["毎食後", t]
             end
           },
           prompt: "タイミングを選択してください" %>
+  </div>
+
+  <!-- 用途 -->
+  <div>
+    <%= form.label :purpose, "用途" %><br>
+    <%= form.select :purpose,
+          Medication.purposes.keys.map { |p|
+            case p
+            when "unspecified" then ["未設定", p]
+            when "antipyretic" then ["解熱", p]
+            when "analgesic"   then ["鎮痛", p]
+            when "stomach"     then ["胃薬", p]
+            when "antibiotic"  then ["抗生物質", p]
+            end
+          },
+          prompt: "用途を選択してください" %>
+  </div>
+
+  <!-- 備考 -->
+  <div>
+    <%= form.label :note, "備考" %><br>
+    <%= form.text_area :note, placeholder: "例: 食後30分以内に服用してください", rows: 4 %>
   </div>
 
   <br>
@@ -46,5 +70,6 @@
     <%= form.submit "保存する" %>
   </div>
 <% end %>
+
 
 
