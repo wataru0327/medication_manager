@@ -55,7 +55,9 @@
             <% end %>
           </td>
 
-          <td><%= medication.name %></td>
+          <!-- 薬名リンクで詳細へ遷移 -->
+          <td><%= link_to medication.name, medication %></td>
+
           <td><%= medication.dosage %></td>
 
           <!-- 服用タイミング -->
@@ -85,10 +87,10 @@
           <!-- 備考 -->
           <td><%= medication.note.presence || "-" %></td>
 
+          <!-- 編集・削除リンク -->
           <td>
-            <%= link_to "詳細", medication %> |
             <%= link_to "編集", edit_medication_path(medication) %> |
-            <%= button_to "削除", medication, method: :delete, data: { confirm: "本当に削除しますか？" } %>
+            <%= link_to "削除", medication, method: :delete, data: { confirm: "本当に削除しますか？" } %>
           </td>
         </tr>
       <% end %>
@@ -101,6 +103,8 @@
 <br>
 
 <%= link_to "新規薬を追加", new_medication_path, class: "btn btn-success" %>
+
+
 
 
 
