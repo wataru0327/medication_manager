@@ -17,18 +17,19 @@
           <% if user_signed_in? %>
             <li>
               <% if current_user.patient? %>
+                <span class="user-name">患者: <%= current_user.name %> さん</span> |
                 <%= link_to "ログアウト", destroy_patient_session_path,
                             data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" } %>
               <% elsif current_user.doctor? %>
+                <span class="user-name">医師: <%= current_user.name %> 先生</span> |
                 <%= link_to "ログアウト", destroy_doctor_session_path,
                             data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" } %>
               <% elsif current_user.pharmacy? %>
+                <span class="user-name"><%= current_user.name %></span> |
                 <%= link_to "ログアウト", destroy_pharmacy_session_path,
                             data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" } %>
               <% end %>
             </li>
-          <% else %>
-            <!-- ログイン・新規登録ボタンは非表示 -->
           <% end %>
         </ul>
       </div>
@@ -46,6 +47,7 @@
     </div>
   </body>
 </html>
+
 
 
 

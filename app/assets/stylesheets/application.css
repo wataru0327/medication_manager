@@ -209,3 +209,8 @@ button, .btn {
   color: white;
 }
 
+.nav-links .user-name {
+  font-weight: bold; 
+  color: white; 
+}
+
