@@ -20,3 +20,4 @@ module MedicationManager
     config.time_zone = 'Tokyo'         # タイムゾーンを日本に
   end
 end
+

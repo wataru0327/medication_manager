@@ -36,6 +36,16 @@ ja:
     failure:
       invalid: "メールアドレスまたはパスワードが正しくありません。"
       unauthenticated: "ログインしてください。"
+      already_authenticated: "すでにログインしています。"
+
+  errors:
+    messages:
+      not_saved: "入力内容にエラーがあります"
+      blank: "を入力してください"
+      taken: "はすでに使用されています"
+      too_short: "は%{count}文字以上で入力してください"
+      too_long: "は%{count}文字以内で入力してください"
+
 
 
 

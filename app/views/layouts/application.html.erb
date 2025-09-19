@@ -14,18 +14,21 @@
       <div class="container">
         <h1 class="logo">💊 Medication Manager</h1>
         <ul class="nav-links">
-          <li><%= link_to "処方箋", prescriptions_path %></li>
-          <li><%= link_to "薬", medications_path %></li>
-          <li><%= link_to "ステータス", status_updates_path %></li>
-
           <% if user_signed_in? %>
             <li>
-              <%= link_to "ログアウト", destroy_user_session_path,
-                          data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" } %>
+              <% if current_user.patient? %>
+                <%= link_to "ログアウト", destroy_patient_session_path,
+                            data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" } %>
+              <% elsif current_user.doctor? %>
+                <%= link_to "ログアウト", destroy_doctor_session_path,
+                            data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" } %>
+              <% elsif current_user.pharmacy? %>
+                <%= link_to "ログアウト", destroy_pharmacy_session_path,
+                            data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" } %>
+              <% end %>
             </li>
           <% else %>
-            <li><%= link_to "ログイン", new_user_session_path %></li>
-            <li><%= link_to "新規登録", new_user_registration_path %></li>
+            <!-- ログイン・新規登録ボタンは非表示 -->
           <% end %>
         </ul>
       </div>
@@ -43,6 +46,7 @@
     </div>
   </body>
 </html>
+
 
 
 

@@ -1,0 +1,2 @@
+module Pharmacies::SessionsHelper
+end
