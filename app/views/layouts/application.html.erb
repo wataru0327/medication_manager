@@ -21,7 +21,7 @@
                 <%= link_to "ログアウト", destroy_patient_session_path,
                             data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" } %>
               <% elsif current_user.doctor? %>
-                <span class="user-name">医師: <%= current_user.name %> 先生</span> |
+                <span class="user-name"><%= current_user.hospital_name %>病院 ：<%= current_user.name %>先生</span> |
                 <%= link_to "ログアウト", destroy_doctor_session_path,
                             data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" } %>
               <% elsif current_user.pharmacy? %>
@@ -47,6 +47,7 @@
     </div>
   </body>
 </html>
+
 
 
 

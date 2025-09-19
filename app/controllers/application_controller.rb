@@ -20,8 +20,8 @@ class ApplicationController < ActionController::Base
 
   # Deviseで追加したカラムを許可
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :role])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :role])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :role, :hospital_name])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :role, :hospital_name])
   end
 end
 
