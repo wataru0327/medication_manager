@@ -2,9 +2,9 @@
 
 <%= form_with url: qrcode_search_prescriptions_path, method: :get, local: true do %>
   <div>
-    <%= label_tag :patient_name, "患者名で検索" %>
-    <%= text_field_tag :patient_name, params[:patient_name] %>
-    <%= submit_tag "検索" %>
+    <%= label_tag :q, "患者名またはユーザー番号で検索" %><br>
+    <%= text_field_tag :q, params[:q], placeholder: "例: 山田太郎 または 12345", style: "width: 400px;" %>
+    <%= submit_tag "検索", class: "btn btn-primary" %>
   </div>
 <% end %>
 
@@ -16,30 +16,40 @@
     <thead>
       <tr>
         <th>患者</th>
+        <th>ユーザー番号</th>
         <th>医師</th>
         <th>発行日</th>
-        <th>操作</th>
+        <th>処方箋確認</th> <!-- 👈 新しい列 -->
+        <th>QRコード作成</th>
       </tr>
     </thead>
     <tbody>
       <% @prescriptions.each do |prescription| %>
         <tr>
-          <td><%= prescription.patient.name %></td>
-          <td><%= prescription.doctor.name %></td>
-          <td><%= prescription.issued_at.strftime("%Y-%m-%d") %></td>
+          <td><%= prescription.patient_name %></td>
+          <td><%= prescription.patient_number %></td>
+          <td><%= prescription.doctor&.name %></td>
+          <td><%= prescription.issued_at.strftime("%Y-%m-%d") if prescription.issued_at %></td>
           <td>
-            <%= button_to "この処方箋のQRコードを作成", 
-                          qrcode_generate_prescriptions_path(prescription_id: prescription.id), 
-                          method: :post %>
+            <%= link_to "処方箋を確認する", prescription_path(prescription), class: "btn btn-secondary" %>
+          </td>
+          <td>
+            <%= button_to "この処方箋のQRコードを作成する",
+                          qrcode_generate_prescriptions_path(prescription_id: prescription.id),
+                          method: :post,
+                          class: "btn btn-primary" %>
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
-<% elsif params[:patient_name].present? %>
+<% elsif params[:q].present? %>
   <p>検索結果が見つかりませんでした。</p>
 <% end %>
 
 <br>
 <%= link_to "医師トップページへ戻る", doctor_home_path %>
+
+
+
 

@@ -89,12 +89,24 @@
 
 <hr>
 
-<div>
-  <%= button_to "この処方箋を削除", @prescription, method: :delete, data: { turbo_confirm: "本当に削除しますか？" }, class: "btn btn-danger" %>
-  <div style="margin-bottom: 1em;"></div>
+<div style="display: flex; gap: 10px; align-items: center;">
+  <%= link_to "この処方箋のQRコードを表示", 
+              qrcode_prescription_path(@prescription), 
+              class: "btn btn-primary" %>
+
+  <%= button_to "この処方箋を削除", 
+                @prescription, 
+                method: :delete, 
+                data: { turbo_confirm: "本当に削除しますか？" }, 
+                class: "btn btn-danger" %>
+</div>
+
+<div style="margin-top: 1em;">
   <%= link_to "この処方箋を編集", edit_prescription_path(@prescription) %> |
   <%= link_to "処方箋一覧へ戻る", prescriptions_path %>
 </div>
+
+
 
 
 

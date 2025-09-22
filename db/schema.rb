@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_22_042145) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_22_074303) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -73,6 +73,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_22_042145) do
     t.string "hospital_name"
     t.string "patient_name"
     t.string "patient_code"
+    t.string "patient_number"
     t.index ["doctor_id"], name: "index_prescriptions_on_doctor_id"
     t.index ["patient_id"], name: "index_prescriptions_on_patient_id"
     t.index ["qr_token"], name: "index_prescriptions_on_qr_token", unique: true

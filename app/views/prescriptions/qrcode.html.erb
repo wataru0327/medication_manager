@@ -1,12 +1,16 @@
 <h1>QRコード</h1>
 
-<p>処方箋: <%= @prescription.id %></p>
-<p>患者: <%= @prescription.patient.name %></p>
-<p>医師: <%= @prescription.doctor.name %></p>
+<p>患者: <%= @prescription.patient_name %></p>
+<p>ユーザー番号: <%= @prescription.patient_number %></p>
+<p>病院: <%= @prescription.hospital_name %></p> 
+<p>医師: <%= @prescription.doctor&.name %></p>
 
-<div style="margin-top:20px;">
+
+<div>
   <%= raw @svg %>
 </div>
 
-<hr>
-<%= link_to "処方箋一覧に戻る", prescriptions_path %>
+<br>
+<%= link_to "処方箋一覧に戻る", prescriptions_path %>|
+<%= link_to "医師トップページへ戻る", doctor_home_path %>
+

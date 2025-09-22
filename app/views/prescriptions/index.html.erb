@@ -9,7 +9,6 @@
       <th>医師</th>
       <th>発行日</th>
       <th>有効期限</th>
-      <th>QRコード</th>
       <th>操作</th>
     </tr>
   </thead>
@@ -20,7 +19,6 @@
         <td><%= prescription.doctor&.name %></td>
         <td><%= prescription.issued_at.strftime("%Y-%m-%d") if prescription.issued_at %></td>
         <td><%= prescription.expires_at.strftime("%Y-%m-%d") if prescription.expires_at %></td>
-        <td><%= link_to "QRコード", qrcode_prescription_path(prescription) %></td>
         <td>
           <%= link_to "詳細", prescription %> |
           <%= link_to "編集", edit_prescription_path(prescription) %> 
