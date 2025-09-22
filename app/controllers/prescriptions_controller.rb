@@ -18,7 +18,6 @@ class PrescriptionsController < ApplicationController
 
   # GET /prescriptions/1/edit
   def edit
-    # 編集画面でも prescription_items を最低1つは用意
     @prescription.prescription_items.build if @prescription.prescription_items.empty?
   end
 
@@ -35,7 +34,19 @@ class PrescriptionsController < ApplicationController
       attrs[:expires_at] = issued_time + 4.days if issued_time
     end
 
-    @prescription = Prescription.new(attrs)
+    # 患者番号から patient_id を特定
+    if attrs[:patient_number].present?
+      patient = User.find_by(patient_number: attrs[:patient_number], role: :patient) # ← enum対応
+      if patient
+        attrs[:patient_id] = patient.id
+      else
+        flash.now[:alert] = "患者番号が見つかりません"
+        @prescription = Prescription.new(attrs.except(:patient_number))
+        return render :new, status: :unprocessable_entity
+      end
+    end
+
+    @prescription = Prescription.new(attrs.except(:patient_number))
 
     if @prescription.save
       redirect_to @prescription, notice: "処方箋を登録しました。"
@@ -54,7 +65,13 @@ class PrescriptionsController < ApplicationController
       attrs[:expires_at] = issued_time + 4.days if issued_time
     end
 
-    if @prescription.update(attrs)
+    # 患者番号から patient_id を再特定
+    if attrs[:patient_number].present?
+      patient = User.find_by(patient_number: attrs[:patient_number], role: :patient) # ← enum対応
+      attrs[:patient_id] = patient&.id
+    end
+
+    if @prescription.update(attrs.except(:patient_number))
       redirect_to @prescription, notice: "処方箋を更新しました。", status: :see_other
     else
       render :edit, status: :unprocessable_entity
@@ -69,7 +86,7 @@ class PrescriptionsController < ApplicationController
 
   # GET /prescriptions/1/qrcode
   def qrcode
-    qr = RQRCode::QRCode.new(@prescription.qr_token) # QRトークンをQRコード化
+    qr = RQRCode::QRCode.new(@prescription.qr_token)
     @svg = qr.as_svg(
       offset: 0,
       color: "000",
@@ -104,12 +121,12 @@ class PrescriptionsController < ApplicationController
 
   def prescription_params
     params.require(:prescription).permit(
-      :patient_id, :hospital_name, :issued_at, :expires_at, :qr_token,
+      :patient_id, :patient_number, :patient_name,  # patient_numberは入力用
+      :hospital_name, :issued_at, :expires_at, :qr_token,
       prescription_items_attributes: [:id, :medication_id, :days, :_destroy]
     )
   end
 end
-
 
 
 

@@ -1,15 +1,18 @@
+# app/models/medication.rb
 class Medication < ApplicationRecord
+  # 画像添付（ActiveStorage）
   has_one_attached :image
 
   # 服用タイミング
   enum timing: {
-    morning: 0,   # 朝
-    noon: 1,      # 昼
-    evening: 2,   # 夕方
-    bedtime: 3,   # 就寝前
-    after_meal: 4 # 毎食後
+    morning: 0,    # 朝
+    noon: 1,       # 昼
+    evening: 2,    # 夕方
+    bedtime: 3,    # 就寝前
+    after_meal: 4  # 毎食後
   }
 
+  # 薬の目的
   enum purpose: {
     unspecified: 0, # 未設定
     antipyretic: 1, # 解熱
@@ -18,7 +21,10 @@ class Medication < ApplicationRecord
     antibiotic: 4   # 抗生物質
   }
 
-  validates :name, :dosage, :timing, presence: true
+  # バリデーション
+  validates :name, presence: true
+  validates :dosage, presence: true
+  validates :timing, presence: true
 end
 
 

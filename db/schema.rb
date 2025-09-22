@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_19_055011) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_22_042145) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -71,6 +71,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_055011) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "hospital_name"
+    t.string "patient_name"
+    t.string "patient_code"
     t.index ["doctor_id"], name: "index_prescriptions_on_doctor_id"
     t.index ["patient_id"], name: "index_prescriptions_on_patient_id"
     t.index ["qr_token"], name: "index_prescriptions_on_qr_token", unique: true
@@ -97,7 +99,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_055011) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "hospital_name"
+    t.string "patient_code"
+    t.integer "patient_number"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["patient_code"], name: "index_users_on_patient_code", unique: true
+    t.index ["patient_number"], name: "index_users_on_patient_number", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 

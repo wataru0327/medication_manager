@@ -5,14 +5,15 @@
 
   <div class="field">
     <%= f.label :name, "名前" %><br />
-    <%= f.text_field :name %>
+    <%= f.text_field :name, required: true, placeholder: "例: 山田 太郎" %>
   </div>
 
+  <!-- ロールは固定で patient -->
   <%= f.hidden_field :role, value: "patient" %>
 
   <div class="field">
     <%= f.label :email, "メールアドレス" %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+    <%= f.email_field :email, autofocus: true, autocomplete: "email", required: true %>
   </div>
 
   <div class="field">
@@ -20,16 +21,17 @@
     <% if @minimum_password_length %>
       <em>(<%= @minimum_password_length %>文字以上)</em>
     <% end %><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
+    <%= f.password_field :password, autocomplete: "new-password", required: true %>
   </div>
 
   <div class="field">
     <%= f.label :password_confirmation, "パスワード（確認用）" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+    <%= f.password_field :password_confirmation, autocomplete: "new-password", required: true %>
   </div>
 
   <div class="actions">
-    <%= f.submit "登録する" %>
+    <%= f.submit "登録する", class: "btn btn-primary" %>
   </div>
 <% end %>
+
 

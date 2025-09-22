@@ -10,11 +10,26 @@
     </div>
   <% end %>
 
-  <!-- 患者 -->
+  <!-- ユーザー番号 -->
   <div>
-    <%= form.label :patient_id, "患者" %><br>
-    <%= form.collection_select :patient_id, User.where(role: :patient), :id, :name, prompt: "患者を選択してください" %>
+    <%= form.label :patient_number, "ユーザー番号" %><br>
+    <%= form.text_field :patient_number,
+          value: prescription.patient&.patient_number,
+          placeholder: "患者番号を入力してください",
+          id: "patient_number" %>
   </div>
+
+  <!-- 患者名 -->
+  <div>
+    <%= form.label :patient_name, "患者名" %><br>
+    <%= form.text_field :patient_name,
+          value: prescription.patient_name,
+          placeholder: "患者名を入力してください",
+          id: "patient_name" %>
+  </div>
+
+  <!-- DB保存用 patient_id -->
+  <%= form.hidden_field :patient_id, id: "patient_id" %>
 
   <!-- 病院名 -->
   <div>
@@ -146,8 +161,34 @@
         expiresDateInput.value = expiresDate.toISOString().slice(0, 10);
       }
     });
+
+    // ユーザー番号入力 → 患者名＆patient_id 自動入力
+    const numberInput = document.getElementById("patient_number");
+    const nameInput   = document.getElementById("patient_name");
+    const idInput     = document.getElementById("patient_id");
+
+    numberInput.addEventListener("blur", () => {
+      const num = numberInput.value;
+      if (num.trim() === "") return;
+
+      fetch(`/patients/find_by_number?number=${num}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            nameInput.value = "";
+            idInput.value   = "";
+            alert(data.error);
+          } else {
+            nameInput.value = data.name;
+            idInput.value   = data.id;
+          }
+        });
+    });
   });
 </script>
+
+
+
 
 
 

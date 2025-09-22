@@ -4,18 +4,18 @@ Rails.application.routes.draw do
 
   devise_scope :user do
     # 患者
-    get    "patients/sign_in",   to: "patients/sessions#new",        as: :new_patient_session
-    post   "patients/sign_in",   to: "patients/sessions#create",     as: :patient_session
-    get    "patients/sign_up",   to: "patients/registrations#new",   as: :new_patient_registration
-    post   "patients",           to: "patients/registrations#create",as: :patient_registration
-    delete "patients/sign_out",  to: "patients/sessions#destroy",    as: :destroy_patient_session
+    get    "patients/sign_in",   to: "patients/sessions#new",         as: :new_patient_session
+    post   "patients/sign_in",   to: "patients/sessions#create",      as: :patient_session
+    get    "patients/sign_up",   to: "patients/registrations#new",    as: :new_patient_registration
+    post   "patients",           to: "patients/registrations#create", as: :patient_registration
+    delete "patients/sign_out",  to: "patients/sessions#destroy",     as: :destroy_patient_session
 
     # 医師
-    get    "doctors/sign_in",    to: "doctors/sessions#new",         as: :new_doctor_session
-    post   "doctors/sign_in",    to: "doctors/sessions#create",      as: :doctor_session
-    get    "doctors/sign_up",    to: "doctors/registrations#new",    as: :new_doctor_registration
-    post   "doctors",            to: "doctors/registrations#create", as: :doctor_registration
-    delete "doctors/sign_out",   to: "doctors/sessions#destroy",     as: :destroy_doctor_session
+    get    "doctors/sign_in",    to: "doctors/sessions#new",          as: :new_doctor_session
+    post   "doctors/sign_in",    to: "doctors/sessions#create",       as: :doctor_session
+    get    "doctors/sign_up",    to: "doctors/registrations#new",     as: :new_doctor_registration
+    post   "doctors",            to: "doctors/registrations#create",  as: :doctor_registration
+    delete "doctors/sign_out",   to: "doctors/sessions#destroy",      as: :destroy_doctor_session
 
     # 薬局
     get    "pharmacies/sign_in",   to: "pharmacies/sessions#new",         as: :new_pharmacy_session
@@ -26,6 +26,12 @@ Rails.application.routes.draw do
   end
 
   # 各リソース
+  resources :patients do
+    collection do
+      get :find_by_number   # AJAX用API（ユーザー番号検索）
+    end
+  end
+
   resources :prescriptions do
     member do
       get :qrcode   # 個別処方箋のQRコード表示
@@ -52,6 +58,7 @@ Rails.application.routes.draw do
   # ヘルスチェック
   get "up" => "rails/health#show", as: :rails_health_check
 end
+
 
 
 
