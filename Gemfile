@@ -69,3 +69,5 @@ end
 gem "devise", "~> 4.9"
 
 gem 'rails-i18n'
+
+gem 'select2-rails'

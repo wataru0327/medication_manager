@@ -6,13 +6,26 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %> <!-- Turbo + Stimulus を正しく読み込む -->
+    <%= javascript_importmap_tags %>
   </head>
 
   <body>
     <header class="navbar">
       <div class="container">
-        <h1 class="logo">💊 Medication Manager</h1>
+        <h1 class="logo">
+          <% if user_signed_in? %>
+            <% if current_user.patient? %>
+              <%= link_to "💊 Medication Manager", patient_home_path, class: "logo-link" %>
+            <% elsif current_user.doctor? %>
+              <%= link_to "💊 Medication Manager", doctor_home_path, class: "logo-link" %>
+            <% elsif current_user.pharmacy? %>
+              <%= link_to "💊 Medication Manager", pharmacy_home_path, class: "logo-link" %>
+            <% end %>
+          <% else %>
+            <%= link_to "💊 Medication Manager", unauthenticated_root_path, class: "logo-link" %>
+          <% end %>
+        </h1>
+
         <ul class="nav-links">
           <% if user_signed_in? %>
             <li>
@@ -47,6 +60,9 @@
     </div>
   </body>
 </html>
+
+
+
 
 
 

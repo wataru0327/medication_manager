@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_19_034620) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_19_055011) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -52,6 +52,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_034620) do
     t.integer "purpose", default: 0, null: false
   end
 
+  create_table "prescription_items", force: :cascade do |t|
+    t.bigint "prescription_id", null: false
+    t.bigint "medication_id", null: false
+    t.integer "days", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["medication_id"], name: "index_prescription_items_on_medication_id"
+    t.index ["prescription_id"], name: "index_prescription_items_on_prescription_id"
+  end
+
   create_table "prescriptions", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "doctor_id", null: false
@@ -60,6 +70,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_034620) do
     t.string "qr_token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "hospital_name"
     t.index ["doctor_id"], name: "index_prescriptions_on_doctor_id"
     t.index ["patient_id"], name: "index_prescriptions_on_patient_id"
     t.index ["qr_token"], name: "index_prescriptions_on_qr_token", unique: true
@@ -92,6 +103,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_034620) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "prescription_items", "medications"
+  add_foreign_key "prescription_items", "prescriptions"
   add_foreign_key "prescriptions", "users", column: "doctor_id"
   add_foreign_key "prescriptions", "users", column: "patient_id"
   add_foreign_key "status_updates", "prescriptions"

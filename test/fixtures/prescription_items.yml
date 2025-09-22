@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  prescription: one
+  medication: one
+  days: 1
+
+two:
+  prescription: two
+  medication: two
+  days: 1

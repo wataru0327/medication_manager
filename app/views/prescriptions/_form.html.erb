@@ -10,37 +10,161 @@
     </div>
   <% end %>
 
+  <!-- 患者 -->
   <div>
     <%= form.label :patient_id, "患者" %><br>
     <%= form.collection_select :patient_id, User.where(role: :patient), :id, :name, prompt: "患者を選択してください" %>
   </div>
 
+  <!-- 病院名 -->
+  <div>
+    <%= form.label :hospital_name, "病院名" %><br>
+    <%= text_field_tag :hospital_name, current_user.hospital_name, readonly: true %>
+    <%= form.hidden_field :hospital_name, value: current_user.hospital_name %>
+  </div>
+
+  <!-- 医師 -->
   <div>
     <%= form.label :doctor_id, "医師" %><br>
-    <%= form.collection_select :doctor_id, User.where(role: :doctor), :id, :name, prompt: "医師を選択してください" %>
+    <%= text_field_tag :doctor_name, current_user.name, readonly: true %>
+    <%= form.hidden_field :doctor_id, value: current_user.id %>
   </div>
 
-  <div>
+  <!-- 処方薬 -->
+  <h3>処方薬</h3>
+  <table id="prescription-items-table" style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+    <thead>
+      <tr>
+        <th style="padding: 5px;">薬</th>
+        <th style="padding: 5px;">日数</th>
+        <th style="padding: 5px;">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= form.fields_for :prescription_items do |pm_form| %>
+        <tr>
+          <td style="padding: 5px;">
+            <%= pm_form.collection_select :medication_id, Medication.all, :id, :name, prompt: "薬を選択" %>
+          </td>
+          <td style="padding: 5px;">
+            <%= pm_form.number_field :days, min: 1, style: "width: 80px;" %>
+          </td>
+          <td style="padding: 5px;">
+            <%= link_to "削除", "#", class: "remove-prescription-item" %>
+            <%= pm_form.hidden_field :_destroy %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <!-- 追加ボタン -->
+  <button type="button" id="add-prescription-item" class="btn btn-secondary">＋処方薬を追加</button>
+
+  <!-- 発行日 -->
+  <div style="margin-top: 20px;">
     <%= form.label :issued_at, "発行日" %><br>
-    <%= form.datetime_select :issued_at %>
+    <%= form.date_field :issued_at, value: (prescription.issued_at || Date.today), id: "issued_at_date" %>
   </div>
 
+  <!-- 有効期限 -->
   <div>
     <%= form.label :expires_at, "有効期限" %><br>
-    <%= form.datetime_select :expires_at %>
+    <%= form.date_field :expires_at, value: (prescription.expires_at || Date.today + 4), id: "expires_at_date" %>
   </div>
 
+  <!-- QRトークン -->
   <div>
     <%= form.label :qr_token, "QRトークン" %><br>
     <%= form.text_field :qr_token, value: prescription.qr_token || SecureRandom.uuid %>
   </div>
 
-  <br>
+  <hr>
 
   <div>
-    <%= form.submit "登録する" %>
+    <%= form.submit "登録する", class: "btn btn-primary" %>
   </div>
 <% end %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const tableBody = document.querySelector("#prescription-items-table tbody");
+    const addButton = document.querySelector("#add-prescription-item");
+
+    // 薬データをJSONとして埋め込む
+    const medications = <%= Medication.all.map { |m| {id: m.id, name: m.name} }.to_json.html_safe %>;
+
+    // 処方薬追加
+    addButton.addEventListener("click", function() {
+      const timestamp = new Date().getTime();
+      const options = medications.map(m => `<option value="${m.id}">${m.name}</option>`).join("");
+
+      const newRow = `
+        <tr>
+          <td style="padding: 5px;">
+            <select name="prescription[prescription_items_attributes][${timestamp}][medication_id]" style="width: 100%;">
+              <option value="">薬を選択</option>
+              ${options}
+            </select>
+          </td>
+          <td style="padding: 5px;">
+            <input type="number" name="prescription[prescription_items_attributes][${timestamp}][days]" min="1" style="width: 80px;">
+          </td>
+          <td style="padding: 5px;">
+            <a href="#" class="remove-prescription-item">削除</a>
+            <input type="hidden" name="prescription[prescription_items_attributes][${timestamp}][_destroy]" value="false">
+          </td>
+        </tr>
+      `;
+      tableBody.insertAdjacentHTML("beforeend", newRow);
+    });
+
+    // 処方薬削除
+    document.addEventListener("click", function(e) {
+      if (e.target.matches(".remove-prescription-item")) {
+        e.preventDefault();
+        const row = e.target.closest("tr");
+        const hidden = row.querySelector("input[name*='_destroy']");
+        if (hidden) {
+          hidden.value = "1"; // Railsに削除と認識させる
+          row.style.display = "none";
+        } else {
+          row.remove();
+        }
+      }
+    });
+
+    // 発行日 → 有効期限を自動で +4日
+    const issuedDateInput = document.getElementById("issued_at_date");
+    const expiresDateInput = document.getElementById("expires_at_date");
+
+    issuedDateInput.addEventListener("change", function() {
+      if (issuedDateInput.value) {
+        let issuedDate = new Date(issuedDateInput.value);
+        let expiresDate = new Date(issuedDate);
+        expiresDate.setDate(expiresDate.getDate() + 4);
+        expiresDateInput.value = expiresDate.toISOString().slice(0, 10);
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
