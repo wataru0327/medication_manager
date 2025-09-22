@@ -36,22 +36,36 @@
 <hr>
 
 <h2>処方された薬</h2>
-<% if @prescription.medications.any? %>
-  <ul>
-    <% @prescription.medications.each do |med| %>
-      <li>
-        <%= med.name %> - <%= med.dosage %> - 
-        <%= case med.timing
-            when "morning"    then "朝"
-            when "noon"       then "昼"
-            when "evening"    then "夕方"
-            when "bedtime"    then "就寝前"
-            when "after_meal" then "毎食後"
-            else med.timing
-            end %>
-      </li>
-    <% end %>
-  </ul>
+<% if @prescription.prescription_items.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>薬名</th>
+        <th>用量／１回</th>
+        <th>服用タイミング</th>
+        <th>日数</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @prescription.prescription_items.each do |item| %>
+        <tr>
+          <td><%= item.medication.name %></td>
+          <td><%= item.medication.dosage %></td>
+          <td>
+            <%= case item.medication.timing
+                when "morning"    then "朝"
+                when "noon"       then "昼"
+                when "evening"    then "夕方"
+                when "bedtime"    then "就寝前"
+                when "after_meal" then "毎食後"
+                else item.medication.timing
+                end %>
+          </td>
+          <td><%= item.days %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% else %>
   <p>登録された薬はありません。</p>
 <% end %>
@@ -76,9 +90,10 @@
 <hr>
 
 <div>
+  <%= button_to "この処方箋を削除", @prescription, method: :delete, data: { turbo_confirm: "本当に削除しますか？" }, class: "btn btn-danger" %>
+  <div style="margin-bottom: 1em;"></div>
   <%= link_to "この処方箋を編集", edit_prescription_path(@prescription) %> |
-  <%= link_to "処方箋一覧へ戻る", prescriptions_path %> |
-  <%= button_to "この処方箋を削除", @prescription, method: :delete, data: { turbo_confirm: "本当に削除しますか？" } %>
+  <%= link_to "処方箋一覧へ戻る", prescriptions_path %>
 </div>
 
 

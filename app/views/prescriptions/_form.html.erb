@@ -1,6 +1,6 @@
 <%= form_with(model: prescription, local: true) do |form| %>
   <% if prescription.errors.any? %>
-    <div style="color: red">
+    <div class="form-errors">
       <h2><%= prescription.errors.count %> 件のエラーにより保存できませんでした:</h2>
       <ul>
         <% prescription.errors.full_messages.each do |message| %>
@@ -47,26 +47,27 @@
 
   <!-- 処方薬 -->
   <h3>処方薬</h3>
-  <table id="prescription-items-table" style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+  <table id="prescription-items-table">
     <thead>
       <tr>
-        <th style="padding: 5px;">薬</th>
-        <th style="padding: 5px;">日数</th>
-        <th style="padding: 5px;">操作</th>
+        <th>薬</th>
+        <th>日数</th>
+        <th>操作</th>
       </tr>
     </thead>
     <tbody>
       <%= form.fields_for :prescription_items do |pm_form| %>
-        <tr>
-          <td style="padding: 5px;">
-            <%= pm_form.collection_select :medication_id, Medication.all, :id, :name, prompt: "薬を選択" %>
+        <tr class="prescription-item">
+          <td>
+            <%= pm_form.collection_select :medication_id, Medication.all, :id, :name,
+                prompt: "薬を選択", class: "form-control" %>
           </td>
-          <td style="padding: 5px;">
-            <%= pm_form.number_field :days, min: 1, style: "width: 80px;" %>
+          <td>
+            <%= pm_form.number_field :days, min: 1, class: "form-control text-center" %>
           </td>
-          <td style="padding: 5px;">
-            <%= link_to "削除", "#", class: "remove-prescription-item" %>
-            <%= pm_form.hidden_field :_destroy %>
+          <td class="action-col">
+            <%= link_to "削除", "#", class: "remove-item" %>
+            <%= pm_form.hidden_field :_destroy, class: "destroy-flag" %>
           </td>
         </tr>
       <% end %>
@@ -77,19 +78,19 @@
   <button type="button" id="add-prescription-item" class="btn btn-secondary">＋処方薬を追加</button>
 
   <!-- 発行日 -->
-  <div style="margin-top: 20px;">
+  <div class="form-group">
     <%= form.label :issued_at, "発行日" %><br>
     <%= form.date_field :issued_at, value: (prescription.issued_at || Date.today), id: "issued_at_date" %>
   </div>
 
   <!-- 有効期限 -->
-  <div>
+  <div class="form-group">
     <%= form.label :expires_at, "有効期限" %><br>
     <%= form.date_field :expires_at, value: (prescription.expires_at || Date.today + 4), id: "expires_at_date" %>
   </div>
 
   <!-- QRトークン -->
-  <div>
+  <div class="form-group">
     <%= form.label :qr_token, "QRトークン" %><br>
     <%= form.text_field :qr_token, value: prescription.qr_token || SecureRandom.uuid %>
   </div>
@@ -101,91 +102,113 @@
   </div>
 <% end %>
 
+<!-- 薬データをJS用に埋め込み -->
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const tableBody = document.querySelector("#prescription-items-table tbody");
-    const addButton = document.querySelector("#add-prescription-item");
+  window.medications = <%= Medication.all.map { |m| {id: m.id, name: m.name} }.to_json.html_safe %>;
+</script>
 
-    // 薬データをJSONとして埋め込む
-    const medications = <%= Medication.all.map { |m| {id: m.id, name: m.name} }.to_json.html_safe %>;
+<script>
+  let prescriptionFormInitialized = false;
 
-    // 処方薬追加
-    addButton.addEventListener("click", function() {
-      const timestamp = new Date().getTime();
-      const options = medications.map(m => `<option value="${m.id}">${m.name}</option>`).join("");
+  function initPrescriptionForm() {
+    if (prescriptionFormInitialized) return;
+    prescriptionFormInitialized = true;
 
-      const newRow = `
-        <tr>
-          <td style="padding: 5px;">
-            <select name="prescription[prescription_items_attributes][${timestamp}][medication_id]" style="width: 100%;">
-              <option value="">薬を選択</option>
-              ${options}
-            </select>
-          </td>
-          <td style="padding: 5px;">
-            <input type="number" name="prescription[prescription_items_attributes][${timestamp}][days]" min="1" style="width: 80px;">
-          </td>
-          <td style="padding: 5px;">
-            <a href="#" class="remove-prescription-item">削除</a>
-            <input type="hidden" name="prescription[prescription_items_attributes][${timestamp}][_destroy]" value="false">
-          </td>
-        </tr>
-      `;
-      tableBody.insertAdjacentHTML("beforeend", newRow);
-    });
-
-    // 処方薬削除
-    document.addEventListener("click", function(e) {
-      if (e.target.matches(".remove-prescription-item")) {
-        e.preventDefault();
-        const row = e.target.closest("tr");
-        const hidden = row.querySelector("input[name*='_destroy']");
-        if (hidden) {
-          hidden.value = "1"; // Railsに削除と認識させる
-          row.style.display = "none";
-        } else {
-          row.remove();
-        }
-      }
-    });
-
-    // 発行日 → 有効期限を自動で +4日
-    const issuedDateInput = document.getElementById("issued_at_date");
-    const expiresDateInput = document.getElementById("expires_at_date");
-
-    issuedDateInput.addEventListener("change", function() {
-      if (issuedDateInput.value) {
-        let issuedDate = new Date(issuedDateInput.value);
-        let expiresDate = new Date(issuedDate);
-        expiresDate.setDate(expiresDate.getDate() + 4);
-        expiresDateInput.value = expiresDate.toISOString().slice(0, 10);
-      }
-    });
-
-    // ユーザー番号入力 → 患者名＆patient_id 自動入力
+    const tableBody   = document.querySelector("#prescription-items-table tbody");
+    const addButton   = document.getElementById("add-prescription-item");
     const numberInput = document.getElementById("patient_number");
     const nameInput   = document.getElementById("patient_name");
     const idInput     = document.getElementById("patient_id");
+    const medications = window.medications || [];
 
-    numberInput.addEventListener("blur", () => {
-      const num = numberInput.value;
-      if (num.trim() === "") return;
+    // --- 処方薬追加 ---
+    if (addButton && tableBody) {
+      addButton.addEventListener("click", () => {
+        const timestamp = new Date().getTime();
+        const options = medications.map(m => `<option value="${m.id}">${m.name}</option>`).join("");
 
-      fetch(`/patients/find_by_number?number=${num}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.error) {
-            nameInput.value = "";
-            idInput.value   = "";
-            alert(data.error);
-          } else {
-            nameInput.value = data.name;
-            idInput.value   = data.id;
+        const newRow = `
+          <tr class="prescription-item">
+            <td>
+              <select name="prescription[prescription_items_attributes][${timestamp}][medication_id]"
+                      class="form-control" required>
+                <option value="">薬を選択</option>${options}
+              </select>
+            </td>
+            <td>
+              <input type="number" name="prescription[prescription_items_attributes][${timestamp}][days]"
+                     min="1" class="form-control text-center" required>
+            </td>
+            <td class="action-col">
+              <a href="#" class="remove-item">削除</a>
+              <input type="hidden" class="destroy-flag"
+                     name="prescription[prescription_items_attributes][${timestamp}][_destroy]" value="false">
+            </td>
+          </tr>
+        `;
+        tableBody.insertAdjacentHTML("beforeend", newRow);
+      });
+
+      // --- 削除（委譲方式）---
+      tableBody.addEventListener("click", (e) => {
+        if (e.target.classList.contains("remove-item")) {
+          e.preventDefault();
+          const row = e.target.closest(".prescription-item");
+          if (row) {
+            row.querySelector(".destroy-flag").value = "1";
+            row.style.display = "none";
           }
-        });
-    });
-  });
+        }
+      });
+    }
+
+    // --- ユーザー番号 → 患者名 自動補完 ---
+    if (numberInput && nameInput && idInput) {
+      numberInput.addEventListener("blur", () => {
+        const num = numberInput.value.trim();
+        if (num === "") return;
+
+        fetch(`/patients/find_by_number?number=${num}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.error) {
+              nameInput.value = "";
+              idInput.value   = "";
+              alert(data.error);
+            } else {
+              nameInput.value = data.name;
+              idInput.value   = data.id;
+            }
+          })
+          .catch((err) => console.error("通信エラー:", err));
+      });
+    }
+
+    // --- 発行日 → 有効期限 自動補完 ---
+    const issuedDateInput = document.getElementById("issued_at_date");
+    const expiresDateInput = document.getElementById("expires_at_date");
+
+    if (issuedDateInput && expiresDateInput) {
+      issuedDateInput.addEventListener("change", function() {
+        if (issuedDateInput.value) {
+          let issuedDate = new Date(issuedDateInput.value);
+          let expiresDate = new Date(issuedDate);
+          expiresDate.setDate(expiresDate.getDate() + 4);
+          expiresDateInput.value = expiresDate.toISOString().slice(0, 10);
+        }
+      });
+    }
+  }
+
+  document.addEventListener("turbo:load", initPrescriptionForm);
+  document.addEventListener("turbo:render", initPrescriptionForm);
 </script>
+
+
+
+
+
+
 
 
 
