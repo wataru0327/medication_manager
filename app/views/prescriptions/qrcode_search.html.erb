@@ -1,0 +1,45 @@
+<h1>QRコード作成</h1>
+
+<%= form_with url: qrcode_search_prescriptions_path, method: :get, local: true do %>
+  <div>
+    <%= label_tag :patient_name, "患者名で検索" %>
+    <%= text_field_tag :patient_name, params[:patient_name] %>
+    <%= submit_tag "検索" %>
+  </div>
+<% end %>
+
+<hr>
+
+<% if @prescriptions.any? %>
+  <h2>検索結果</h2>
+  <table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+      <tr>
+        <th>患者</th>
+        <th>医師</th>
+        <th>発行日</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @prescriptions.each do |prescription| %>
+        <tr>
+          <td><%= prescription.patient.name %></td>
+          <td><%= prescription.doctor.name %></td>
+          <td><%= prescription.issued_at.strftime("%Y-%m-%d") %></td>
+          <td>
+            <%= button_to "この処方箋のQRコードを作成", 
+                          qrcode_generate_prescriptions_path(prescription_id: prescription.id), 
+                          method: :post %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% elsif params[:patient_name].present? %>
+  <p>検索結果が見つかりませんでした。</p>
+<% end %>
+
+<br>
+<%= link_to "医師トップページへ戻る", doctor_home_path %>
+

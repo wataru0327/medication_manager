@@ -8,6 +8,10 @@
     <td><%= @prescription.patient.name %></td>
   </tr>
   <tr>
+    <th>病院名</th>
+    <td><%= @prescription.hospital_name %></td>
+  </tr>
+  <tr>
     <th>医師</th>
     <td><%= @prescription.doctor.name %></td>
   </tr>
@@ -72,5 +76,6 @@
   <%= link_to "処方箋一覧へ戻る", prescriptions_path %> |
   <%= button_to "この処方箋を削除", @prescription, method: :delete, data: { turbo_confirm: "本当に削除しますか？" } %>
 </div>
+
 
 

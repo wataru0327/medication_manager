@@ -1,5 +1,5 @@
 class PrescriptionsController < ApplicationController
-  before_action :set_prescription, only: %i[ show edit update destroy ]
+  before_action :set_prescription, only: %i[ show edit update destroy qrcode ]
 
   # GET /prescriptions
   def index
@@ -67,6 +67,35 @@ class PrescriptionsController < ApplicationController
     redirect_to prescriptions_path, notice: "処方箋を削除しました。", status: :see_other
   end
 
+  # GET /prescriptions/1/qrcode
+  def qrcode
+    qr = RQRCode::QRCode.new(@prescription.qr_token) # QRトークンをQRコード化
+    @svg = qr.as_svg(
+      offset: 0,
+      color: "000",
+      shape_rendering: "crispEdges",
+      module_size: 6,
+      standalone: true
+    )
+  end
+
+  # GET /prescriptions/qrcode_search
+  def qrcode_search
+    if params[:patient_name].present?
+      @prescriptions = Prescription.joins(:patient)
+                                   .where("users.name LIKE ?", "%#{params[:patient_name]}%")
+                                   .includes(:patient, :doctor)
+    else
+      @prescriptions = []
+    end
+  end
+
+  # POST /prescriptions/qrcode_generate
+  def qrcode_generate
+    @prescription = Prescription.find(params[:prescription_id])
+    redirect_to qrcode_prescription_path(@prescription)
+  end
+
   private
 
   def set_prescription
@@ -80,6 +109,8 @@ class PrescriptionsController < ApplicationController
     )
   end
 end
+
+
 
 
 

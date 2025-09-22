@@ -1,0 +1,11 @@
+<h1>処方箋QRコード</h1>
+
+<p>患者: <%= @prescription.patient.name %></p>
+<p>発行日: <%= @prescription.issued_at.strftime("%Y年%m月%d日") %></p>
+
+<div>
+  <%= raw @svg %>
+</div>
+
+<%= link_to "処方箋一覧に戻る", prescriptions_path %> |
+<%= link_to "医師トップページへ戻る", doctor_home_path %>

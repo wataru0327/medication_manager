@@ -26,7 +26,16 @@ Rails.application.routes.draw do
   end
 
   # 各リソース
-  resources :prescriptions
+  resources :prescriptions do
+    member do
+      get :qrcode   # 個別処方箋のQRコード表示
+    end
+    collection do
+      get  :qrcode_search   # QRコード作成ページ（患者名で検索）
+      post :qrcode_generate # 検索結果からQRコード生成
+    end
+  end
+
   resources :medications
   resources :status_updates
 
@@ -43,6 +52,8 @@ Rails.application.routes.draw do
   # ヘルスチェック
   get "up" => "rails/health#show", as: :rails_health_check
 end
+
+
 
 
 

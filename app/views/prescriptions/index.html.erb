@@ -9,7 +9,7 @@
       <th>医師</th>
       <th>発行日</th>
       <th>有効期限</th>
-      <th>QRトークン</th>
+      <th>QRコード</th>
       <th>操作</th>
     </tr>
   </thead>
@@ -20,10 +20,10 @@
         <td><%= prescription.doctor&.name %></td>
         <td><%= prescription.issued_at.strftime("%Y-%m-%d") if prescription.issued_at %></td>
         <td><%= prescription.expires_at.strftime("%Y-%m-%d") if prescription.expires_at %></td>
-        <td><%= prescription.qr_token %></td>
+        <td><%= link_to "QRコード", qrcode_prescription_path(prescription) %></td>
         <td>
           <%= link_to "詳細", prescription %> |
-          <%= link_to "編集", edit_prescription_path(prescription) %> |
+          <%= link_to "編集", edit_prescription_path(prescription) %> 
           <%= button_to "削除", prescription, method: :delete, data: { confirm: "本当に削除しますか？" } %>
         </td>
       </tr>
@@ -33,7 +33,13 @@
 
 <br>
 
-<%= link_to "新しい処方箋を作成", new_prescription_path %>
+<%= link_to "新しい処方箋を作成", new_prescription_path %> |
+<%= link_to "医師トップページへ戻る", doctor_home_path %>
+
+
+
+
+
 
 
 
