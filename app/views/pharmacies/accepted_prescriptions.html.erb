@@ -1,0 +1,61 @@
+<h1>受付中の処方箋一覧</h1>
+
+<% if @accepted.any? %>
+  <table border="1" cellpadding="8" cellspacing="0">
+    <thead style="background-color: #f0f0f0;">
+      <tr>
+        <th>患者名</th>
+        <th>受付日時</th>
+        <th>現在のステータス</th>
+        <th>詳細</th>
+        <th>お薬受け渡し</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @accepted.each do |record| %>
+        <% prescription = record.prescription %>
+        <%= turbo_frame_tag dom_id(prescription) do %>
+          <tr id="<%= dom_id(prescription) %>">
+            <td><%= prescription.patient.name %></td>
+            <td><%= record.created_at.strftime("%Y年%m月%d日 %H:%M") %></td>
+            <td><%= record.status_label %></td>
+            <td>
+              <%= link_to "詳細を見る",
+                          prescription_path(prescription),
+                          class: "btn btn-primary" %>
+            </td>
+            <td>
+              <% if record.status == "completed" %>
+                <button class="btn btn-success" disabled>受け渡し済み</button>
+              <% elsif record.status == "processing" %>
+                <%= button_to "受け渡し完了",
+                              update_status_prescription_path(prescription, status: :completed),
+                              method: :post,
+                              form: { "data-turbo" => "false" },   # Turbo無効化で確実にPOST
+                              class: "btn btn-success",
+                              data: { turbo_confirm: "この処方箋を受け渡し済みにしますか？" } %>
+              <% else %>
+                <span style="color: gray;">調剤後にしてください</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>現在受付済みの処方箋はありません。</p>
+<% end %>
+
+<div style="margin-top: 1em;">
+  <%= link_to "薬局トップページへ戻る", pharmacy_home_path, class: "btn btn-secondary" %>
+</div>
+
+
+
+
+
+
+
+
+

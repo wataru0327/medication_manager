@@ -1,5 +1,3 @@
-<p style="color: green"><%= notice %></p>
-
 <h1>処方箋の詳細</h1>
 
 <table>
@@ -70,17 +68,48 @@
   <p>登録された薬はありません。</p>
 <% end %>
 
+<%# 💊 薬局ログイン時のみステータス操作を表示 %>
+<% if current_user&.pharmacy? %>
+  <%= turbo_frame_tag dom_id(@prescription, :status_button) do %>
+    <%= render "prescriptions/status_button", prescription: @prescription %>
+  <% end %>
+<% end %>
+
 <hr>
 
-<h2>ステータス更新履歴</h2>
+<h2>現在のステータス</h2>
 <% if @prescription.status_updates.any? %>
+  <% latest_status = @prescription.status_updates.order(created_at: :desc).first %>
+  <p>
+    <strong><%= latest_status.status_label %></strong>
+    （更新者: <%= latest_status.pharmacy.name %> /
+     更新日時: <%= latest_status.created_at.strftime("%Y年%m月%d日 %H:%M") %>）
+  </p>
+<% else %>
+  <p>まだステータスは設定されていません。</p>
+<% end %>
+
+<hr>
+
+<h2>ステータス更新履歴（最新のみ）</h2>
+<% if @prescription.status_updates.any? %>
+  <% latest_statuses = @prescription.status_updates
+                      .group_by(&:status)
+                      .transform_values { |records| records.max_by(&:created_at) } %>
+
   <ul>
-    <% @prescription.status_updates.each do |status| %>
-      <li>
-        <%= status.pharmacy.name %>： 
-        <%= status.status %> 
-        (<%= status.created_at.strftime("%Y年%m月%d日 %H:%M") %>)
-      </li>
+    <% ["accepted", "processing", "completed"].each do |status| %>
+      <% if latest_statuses[status] %>
+        <li>
+          <%= latest_statuses[status].pharmacy.name %>：
+          <%= case status
+              when "accepted"   then "受付開始"
+              when "processing" then "調剤開始"
+              when "completed"  then "受け渡し"
+              end %>
+          (<%= latest_statuses[status].created_at.strftime("%Y年%m月%d日 %H:%M") %>)
+        </li>
+      <% end %>
     <% end %>
   </ul>
 <% else %>
@@ -89,22 +118,49 @@
 
 <hr>
 
-<div style="display: flex; gap: 10px; align-items: center;">
-  <%= link_to "この処方箋のQRコードを表示", 
-              qrcode_prescription_path(@prescription), 
-              class: "btn btn-primary" %>
+<% if current_user&.doctor? %>
+  <%# 👨‍⚕️ 医師ログイン時のみ操作リンク表示 %>
+  <div style="display: flex; gap: 10px; align-items: center;">
+    <%= link_to "この処方箋のQRコードを表示",
+                qrcode_prescription_path(@prescription),
+                class: "btn btn-primary" %>
 
-  <%= button_to "この処方箋を削除", 
-                @prescription, 
-                method: :delete, 
-                data: { turbo_confirm: "本当に削除しますか？" }, 
-                class: "btn btn-danger" %>
-</div>
+    <%= button_to "この処方箋を削除",
+                  @prescription,
+                  method: :delete,
+                  data: { turbo_confirm: "本当に削除しますか？" },
+                  class: "btn btn-danger" %>
+  </div>
 
-<div style="margin-top: 1em;">
-  <%= link_to "この処方箋を編集", edit_prescription_path(@prescription) %> |
-  <%= link_to "処方箋一覧へ戻る", prescriptions_path %>
-</div>
+  <div style="margin-top: 1em;">
+    <%= link_to "この処方箋を編集", edit_prescription_path(@prescription) %> |
+    <%= link_to "処方箋一覧へ戻る", prescriptions_path %>
+  </div>
+
+<% elsif current_user&.pharmacy? %>
+  <%# 💊 薬局ログイン時はナビリンクを表示 %>
+  <div style="margin-top: 1em; display: flex; gap: 15px; align-items: center; justify-content: flex-start;">
+    <%= link_to "処方箋を読み込み（QRコード）へ戻る", scan_qr_pharmacies_path, class: "btn btn-secondary" %>
+    <span style="color: #888;">|</span>
+    <%= link_to "受付中の処方箋一覧へ戻る", accepted_prescriptions_pharmacies_path, class: "btn btn-secondary" %>
+    <span style="color: #888;">|</span>
+    <%= link_to "薬局トップページへ戻る", pharmacy_home_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

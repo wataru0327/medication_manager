@@ -3,8 +3,6 @@
 <p><%= current_user.name %> さん、ようこそ！</p>
 
 <ul>
-  <li>処方箋の確認</li>
-  <li>服薬ステータスの確認</li>
-  <li>薬局からのお知らせ</li>
+  <li><%= link_to "処方箋を受け取る", scan_qr_patients_path, class: "btn btn-primary" %></li>
 </ul>
 

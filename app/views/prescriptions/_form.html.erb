@@ -12,7 +12,7 @@
 
   <!-- ユーザー番号 -->
   <div>
-    <%= form.label :patient_number, "ユーザー番号" %><br>
+    <%= form.label :patient_number, "患者コード" %><br>
     <%= form.text_field :patient_number,
           value: prescription.patient&.patient_number,
           placeholder: "患者番号を入力してください",

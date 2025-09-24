@@ -1,47 +1,68 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>ステータス一覧</h1>
+<h1>受け渡し済み処方箋一覧</h1>
 
-<table border="1" cellpadding="5" cellspacing="0">
-  <thead style="background-color: #f0f0f0;">
-    <tr>
-      <th>ID</th>
-      <th>処方箋ID</th>
-      <th>薬局</th>
-      <th>ステータス</th>
-      <th>更新日時</th>
-      <th>操作</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @status_updates.each do |status_update| %>
+<!-- 🔍 検索フォーム追加 -->
+<%= form_with url: completed_prescriptions_pharmacies_path, method: :get, local: true, class: "search-form", style: "margin-bottom: 1em;" do %>
+  <%= label_tag :q, "患者コード / 患者名で検索：" %>
+  <%= text_field_tag :q, params[:q], placeholder: "例: 1 または 山田太郎", style: "margin-right: 10px;" %>
+  <%= submit_tag "検索", class: "btn btn-primary" %>
+  <% if params[:q].present? %>
+    <%= link_to "クリア", completed_prescriptions_pharmacies_path, class: "btn btn-secondary", style: "margin-left: 10px;" %>
+  <% end %>
+<% end %>
+
+<div style="margin-top: 20px;"></div>
+
+<% if @status_updates.any? %>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <thead style="background-color: #f0f0f0;">
       <tr>
-        <td><%= status_update.id %></td>
-        <td><%= status_update.prescription_id %></td>
-        <td><%= status_update.pharmacy&.name %></td>
-        <td>
-          <%=
-            case status_update.status
-            when "pending" then "受付中"
-            when "processing" then "調剤中"
-            when "completed" then "受け渡し済み"
-            else status_update.status
-            end
-          %>
-        </td>
-        <td><%= status_update.updated_at.strftime("%Y-%m-%d %H:%M") %></td>
-        <td>
-          <%= link_to "詳細", status_update %> |
-          <%= link_to "編集", edit_status_update_path(status_update) %> |
-          <%= button_to "削除", status_update, method: :delete, data: { confirm: "本当に削除しますか？" } %>
-        </td>
+        <th>患者コード</th>
+        <th>患者名</th>
+        <th>処方箋</th>
+        <th>ステータス</th>
+        <th>更新日時</th>
+        <th>ステータス履歴</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @status_updates.each do |status_update| %>
+        <% next unless status_update.status == "completed" %>
+        <tr>
+          <td><%= status_update.prescription.patient&.patient_number %></td>
+          <td><%= status_update.prescription.patient&.name %></td>
+          <td>
+            <%= link_to "詳細を見る",
+                        prescription_path(status_update.prescription),
+                        class: "btn btn-primary" %>
+          </td>
+          <td>受け渡し済み</td>
+          <td><%= status_update.updated_at.strftime("%Y-%m-%d %H:%M") %></td>
+          <td>
+            <%= link_to "履歴を見る",
+                        status_update_path(status_update),
+                        class: "btn btn-info" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>完了済みの処方箋はまだありません。</p>
+<% end %>
 
 <br>
 
-<%= link_to "＋ 新規ステータスを作成", new_status_update_path, style: "font-weight: bold;" %>
+<%= link_to "薬局トップページへ戻る", pharmacy_home_path, class: "btn btn-secondary" %>
+
+
+
+
+
+
+
+
+
 
 

@@ -1,46 +1,41 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>ステータス詳細</h1>
+<h1>ステータス履歴（最新）</h1>
 
-<table>
-  <tr>
-    <th>ID</th>
-    <td><%= @status_update.id %></td>
-  </tr>
-  <tr>
-    <th>処方箋ID</th>
-    <td><%= @status_update.prescription_id %></td>
-  </tr>
-  <tr>
-    <th>薬局</th>
-    <td><%= @status_update.pharmacy.name %></td>
-  </tr>
-  <tr>
-    <th>ステータス</th>
-    <td>
-      <%=
-        case @status_update.status
-        when "pending" then "受付中"
-        when "processing" then "調剤中"
-        when "completed" then "受け渡し済み"
-        end
-      %>
-    </td>
-  </tr>
-  <tr>
-    <th>作成日時</th>
-    <td><%= @status_update.created_at.strftime("%Y-%m-%d %H:%M") %></td>
-  </tr>
-  <tr>
-    <th>更新日時</th>
-    <td><%= @status_update.updated_at.strftime("%Y-%m-%d %H:%M") %></td>
-  </tr>
+<table border="1" cellpadding="6" cellspacing="0">
+  <thead style="background-color: #f0f0f0;">
+    <tr>
+      <th>ステータス</th>
+      <th>更新日時</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% latest_statuses = @status_update.prescription.status_updates
+                        .group_by(&:status)
+                        .transform_values { |records| records.max_by(&:created_at) } %>
+
+    <% ["accepted", "processing", "completed"].each do |status| %>
+      <% if latest_statuses[status] %>
+        <tr>
+          <td>
+            <%= case status
+                when "accepted" then "受付開始"
+                when "processing" then "調剤開始"
+                when "completed" then "受け渡し"
+                end %>
+          </td>
+          <td><%= latest_statuses[status].created_at.strftime("%Y-%m-%d %H:%M") %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
 </table>
 
 <hr>
 
 <div>
-  <%= link_to "編集", edit_status_update_path(@status_update) %> |
-  <%= link_to "一覧に戻る", status_updates_path %> |
-  <%= button_to "削除", @status_update, method: :delete, data: { confirm: "本当に削除しますか？" } %>
+  <%= link_to "完了済み一覧に戻る", status_updates_path %> |
+  <%= link_to "薬局トップページへ戻る", pharmacy_home_path %>
 </div>
+
+

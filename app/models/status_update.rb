@@ -2,8 +2,25 @@ class StatusUpdate < ApplicationRecord
   belongs_to :prescription
   belongs_to :pharmacy, class_name: "User"
 
-  enum status: { pending: 0, processing: 1, completed: 2 }
+  enum status: {
+    pending: 0,      # 未処理
+    accepted: 1,     # 受付済み
+    processing: 2,   # 調剤中
+    completed: 3     # 完了
+  }
 
   validates :prescription_id, :pharmacy_id, :status, presence: true
+
+  # ✅ 日本語ラベルを返すメソッド
+  def status_label
+    case status
+    when "pending"    then "未処理"
+    when "accepted"   then "受付済み"
+    when "processing" then "調剤中"
+    when "completed"  then "完了"
+    else status
+    end
+  end
 end
+
 

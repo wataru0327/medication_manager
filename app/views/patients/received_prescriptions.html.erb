@@ -1,0 +1,19 @@
+<h1>受け取った処方箋一覧</h1>
+
+<% if @prescriptions.any? %>
+  <ul>
+    <% @prescriptions.each do |prescription| %>
+      <li>
+        <%= link_to prescription_path(prescription) do %>
+          <%= prescription.hospital_name %> - 
+          発行日: <%= prescription.issued_at.strftime("%Y年%m月%d日") %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>まだ受け取った処方箋はありません。</p>
+<% end %>
+
+<hr>
+<%= link_to "患者トップページへ戻る", patient_home_path %>

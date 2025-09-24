@@ -1,0 +1,25 @@
+<% latest_status = local_assigns[:prescription].status_updates.order(created_at: :desc).first %>
+
+<div style="margin-top: 1.5em; text-align: center;">
+  <% case latest_status&.status %>
+  <% when "completed" %>
+    <p style="color: green; font-weight: bold;">完了済み</p>
+  <% when "processing" %>
+    <button class="btn"
+            style="background-color: gray; color: white; font-weight: bold; padding: 10px 20px; border-radius: 5px;"
+            disabled>調剤中</button>
+  <% else %>
+    <%= button_to "調剤開始",
+                  update_status_prescription_path(local_assigns[:prescription], status: :processing),
+                  method: :post,
+                  form: { "data-turbo" => "false" },   # Turbo無効化で確実にPOST
+                  class: "btn",
+                  style: "background-color: orange; color: white; font-weight: bold; padding: 10px 20px; border-radius: 5px;" %>
+  <% end %>
+</div>
+
+
+
+
+
+

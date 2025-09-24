@@ -3,7 +3,9 @@
 <p><%= current_user.name %> さん、ようこそ！</p>
 
 <ul>
-  <li><%= link_to "処方箋一覧を見る", prescriptions_path %></li>
-  <li><%= link_to "ステータス更新一覧を見る", status_updates_path %></li>
+  <li><%= link_to "処方箋を読み込み（QRコード）", scan_qr_pharmacies_path %></li>
+  <li><%= link_to "受付中の処方箋一覧を見る", accepted_prescriptions_pharmacies_path %></li>
+  <li><%= link_to "受け渡し済み処方箋を見る", completed_prescriptions_pharmacies_path %></li>
 </ul>
+
 

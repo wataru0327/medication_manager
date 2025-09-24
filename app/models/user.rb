@@ -24,6 +24,9 @@ class User < ApplicationRecord
            dependent: :destroy,
            inverse_of: :pharmacy
 
+  # 👇 ここを追加（QRコード読み取り履歴）
+  has_many :qr_scans, dependent: :destroy
+
   # バリデーション
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true

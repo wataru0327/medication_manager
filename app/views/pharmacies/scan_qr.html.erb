@@ -1,0 +1,94 @@
+<h1>QRコード読み取り</h1>
+
+<p>カメラを許可すると、処方箋のQRコードをスキャンできます。</p>
+
+<video id="camera" width="400" height="300" autoplay></video>
+<canvas id="canvas" hidden></canvas>
+
+<!-- QRコード読み取り結果を表示 -->
+<p id="result" style="margin-top: 1em; font-weight: bold; color: green;"></p>
+
+<!-- 処方箋確認フォーム -->
+<%= form_with url: scan_qr_pharmacies_path, method: :get, local: true do %>
+  <%= hidden_field_tag :token, nil, id: "qr_token" %>
+  <%= submit_tag "処方箋を確認", class: "btn btn-primary" %>
+<% end %>
+
+<h2>過去の読み取り履歴（最新5件）</h2>
+<% if @scan_history.any? %>
+  <ul>
+    <% @scan_history.each do |scan| %>
+      <li>
+        <%= link_to prescription_path(scan.prescription) do %>
+          <%= scan.created_at.strftime("%Y年%m月%d日 %H:%M") %> |
+          患者: <%= scan.prescription.patient.name %> |
+          病院: <%= scan.prescription.hospital_name %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>履歴はまだありません。</p>
+<% end %>
+
+<hr>
+<%= link_to "薬局トップページへ戻る", pharmacy_home_path %>
+
+<!-- jsQR 読み取りライブラリ -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+
+<script>
+  const video = document.getElementById("camera");
+  const canvas = document.getElementById("canvas");
+  const context = canvas.getContext("2d");
+  const resultEl = document.getElementById("result");
+  const qrTokenInput = document.getElementById("qr_token");
+
+  // カメラ起動
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+    .then(stream => {
+      video.srcObject = stream;
+      video.setAttribute("playsinline", true);
+      video.play();
+      requestAnimationFrame(tick);
+    })
+    .catch(err => {
+      alert("カメラが利用できません: " + err);
+    });
+
+  // QR解析ループ
+  function tick() {
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: "dontInvert",
+      });
+
+      if (code) {
+        qrTokenInput.value = code.data; // hidden_field に格納
+
+        // ✅ Ajaxで患者名を取得
+        fetch(`/prescriptions/find_by_token?token=${code.data}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.patient_name) {
+              resultEl.textContent = `${data.patient_name}さんの処方箋のQRコードを読み取りました`;
+            } else {
+              resultEl.textContent = "処方箋を確認しました (患者情報なし)";
+            }
+          })
+          .catch(() => {
+            resultEl.textContent = "QRコードを読み取りました: " + code.data;
+          });
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+</script>
+
+
+

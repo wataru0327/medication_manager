@@ -25,39 +25,61 @@ Rails.application.routes.draw do
     delete "pharmacies/sign_out",  to: "pharmacies/sessions#destroy",     as: :destroy_pharmacy_session
   end
 
+  # 各ロール専用トップページ
+  get "patients/home",   to: "patients#home",   as: :patient_home
+  get "doctors/home",    to: "doctors#home",    as: :doctor_home
+  get "pharmacies/home", to: "pharmacies#home", as: :pharmacy_home
+
   # 各リソース
-  resources :patients do
+  resources :patients, only: [] do
     collection do
-      get :find_by_number   # AJAX用API（ユーザー番号検索）
+      get :scan_qr         # 患者用QR読み取りページ
+      get :find_by_number  # ユーザー番号検索API
+      get :find_by_token   # 患者自身の処方箋確認API
+      get :received_prescriptions # ✅ 追加: 受け取った処方箋一覧
     end
   end
 
   resources :prescriptions do
     member do
-      get :qrcode   # 個別処方箋のQRコード表示
+      get  :qrcode          # 個別処方箋のQRコード表示
+      post :update_status, to: "pharmacies#update_status"  # 💊 ステータス更新
+      post :receive, to: "prescriptions#receive"           # ✅ 追加: 患者が処方箋を受け取る
     end
     collection do
       get  :qrcode_search   # QRコード作成ページ（患者名で検索）
       post :qrcode_generate # 検索結果からQRコード生成
+      get  :find_by_token   # 薬局用QRトークン検索API
     end
   end
 
   resources :medications
   resources :status_updates
 
+  # 💊 薬局機能（一覧やスキャン）
+  resources :pharmacies, only: [] do
+    collection do
+      get :scan_qr
+      get :accepted_prescriptions
+      get :completed_prescriptions
+    end
+  end
+
   # 未ログイン時トップ
   unauthenticated do
     root to: "home#index", as: :unauthenticated_root
   end
 
-  # 各ロール専用トップページ
-  get "patients/home",   to: "patients#home",   as: :patient_home
-  get "doctors/home",    to: "doctors#home",    as: :doctor_home
-  get "pharmacies/home", to: "pharmacies#home", as: :pharmacy_home
-
   # ヘルスチェック
   get "up" => "rails/health#show", as: :rails_health_check
 end
+
+
+
+
+
+
+
 
 
 
