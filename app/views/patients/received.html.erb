@@ -1,0 +1,72 @@
+<h2>受け取った処方箋一覧</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>病院名</th>
+      <th>医師</th>
+      <th>発行日</th>
+      <th>有効期限</th>
+      <th>現在のステータス</th>
+      <th>詳細</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @received_prescriptions.each do |prescription| %>
+      <% latest_status = prescription.status_updates.order(created_at: :desc).first %>
+      <tr>
+        <td><%= prescription.hospital_name %></td>
+        <td><%= prescription.doctor.name %></td>
+        <td><%= prescription.issued_at.strftime("%Y年%m月%d日") %></td>
+        <td><%= prescription.expires_at.strftime("%Y年%m月%d日") %></td>
+        <td>
+          <% if latest_status %>
+            <%= case latest_status.status
+                when "pending"    then "保有中"
+                when "accepted"   then "受付済み"
+                when "processing" then "調剤中"
+                when "completed"  then "受け渡し完了"
+                else "保有中"
+                end %>
+          <% else %>
+            保有中
+          <% end %>
+        </td>
+        <td>
+          <%= link_to "詳細を見る",
+                      prescription_path(prescription),
+                      class: "btn btn-primary" %>
+        </td>
+        <td>
+          <% if latest_status.nil? || latest_status.status == "pending" %>
+            <%= link_to "お薬を受け取る",
+                        qrcode_prescription_path(prescription),
+                        class: "btn btn-success" %>
+          <% elsif latest_status.status == "accepted" || latest_status.status == "processing" %>
+            <span style="color: orange;">準備中です。しばらくお待ちください</span>
+          <% elsif latest_status.status == "completed" %>
+            <span style="color: green;">受け取り済みです</span>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<hr>
+
+<div style="margin-top: 1em;">
+  <%= link_to "トップページへ戻る", patient_home_path, class: "btn btn-secondary" %>
+</div>
+
+
+
+
+
+
+
+
+
+
+

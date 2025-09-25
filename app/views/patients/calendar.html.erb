@@ -1,0 +1,159 @@
+<h2 style="margin-bottom: 20px; font-size: 22px; font-weight: bold; color: #333;">💊 お薬カレンダー</h2>
+
+<!-- ✅ 2カラムレイアウト -->
+<div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 320px 1fr; gap: 30px;">
+
+  <!-- ✅ 左カラム -->
+  <div>
+    <!-- 処方薬一覧 -->
+    <h3 style="font-size: 18px; margin-bottom: 10px; color: #444;">処方薬一覧</h3>
+    <table style="width:100%; border-collapse: collapse; text-align:center; font-size: 14px; margin-bottom: 20px;">
+      <thead style="background: #f1f3f5;">
+        <tr>
+          <th style="border: 1px solid #ddd; padding: 6px;">薬名</th>
+          <th style="border: 1px solid #ddd; padding: 6px;">残量</th>
+          <th style="border: 1px solid #ddd; padding: 6px;">表示</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @received_prescriptions&.each do |prescription| %>
+          <% prescription.prescription_items.each do |item| %>
+            <% if item.medication %>
+              <% completed_at = prescription.status_updates.where(status: :completed).order(created_at: :desc).first&.created_at %>
+              <% days_passed = completed_at ? (Date.today - completed_at.to_date).to_i : 0 %>
+              <% remaining = [item.days - days_passed, 0].max %>
+              <tr>
+                <td style="border: 1px solid #ddd; padding: 6px;"><%= item.medication.name %></td>
+                <td style="border: 1px solid #ddd; padding: 6px;"><%= remaining %>日分</td>
+                <td style="border: 1px solid #ddd; padding: 6px;">
+                  <input type="checkbox" class="med-toggle" data-med="<%= item.medication.name %>" checked>
+                </td>
+              </tr>
+            <% end %>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+
+    <!-- 今日のタイムスケジュール -->
+    <h3 style="font-size: 18px; color: #444; margin: 0 0 8px;">📅 今日のお薬スケジュール</h3>
+    <div id="day-schedule"></div>
+  </div>
+
+  <!-- ✅ 右カラム（月間カレンダー） -->
+  <div>
+    <div id="calendar"></div>
+
+    <!-- 凡例 -->
+    <div id="calendar-legend" style="margin-top: 15px; padding: 10px; background: #fafafa; border: 1px solid #ddd; border-radius: 6px; display: flex; justify-content: center; gap: 20px; font-size: 13px; color: #444;">
+      <span>🌅 朝</span>
+      <span>☀️ 昼</span>
+      <span>🌆 夕</span>
+      <span>🌙 就寝前</span>
+      <span>🍽️ 毎食後</span>
+    </div>
+  </div>
+</div>
+
+<!-- 戻るボタン -->
+<div style="margin-top: 1.5em;">
+  <%= link_to "患者トップページへ戻る", patient_home_path, class: "btn btn-secondary", style: "padding: 6px 14px; font-size: 14px;" %>
+</div>
+
+<!-- FullCalendar 読み込み -->
+<%= javascript_include_tag "https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js", defer: true %>
+
+<!-- ✅ 追加CSS: ツールバーを必ず一列に -->
+<style>
+  .fc .fc-toolbar {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;       /* ✅ 改行禁止 */
+  }
+  .fc .fc-toolbar-title {
+    font-size: 16px;         /* ✅ タイトル文字を少し抑える */
+    white-space: nowrap;     /* ✅ 折り返さない */
+    overflow: hidden;
+    text-overflow: ellipsis; /* ✅ 長すぎたら省略 */
+  }
+  .fc .fc-button {
+    font-size: 12px;
+    padding: 2px 6px;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    function getSelectedMeds() {
+      return Array.from(document.querySelectorAll(".med-toggle:checked"))
+                  .map(cb => cb.dataset.med);
+    }
+
+    // === 月間カレンダー ===
+    var calendarEl = document.getElementById("calendar");
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: "dayGridMonth",
+      locale: "ja",
+      headerToolbar: {
+        left: "title",
+        center: "",
+        right: "today prev,next"
+      },
+      buttonText: { today: "今日" },
+      events: function(fetchInfo, successCallback, failureCallback) {
+        var selectedMeds = getSelectedMeds();
+        var query = selectedMeds.length > 0 ? "?meds=" + selectedMeds.join(",") : "";
+        fetch("<%= calendar_events_patients_path(format: :json) %>" + query)
+          .then(r => r.json())
+          .then(data => successCallback(data))
+          .catch(err => failureCallback(err));
+      },
+      height: "auto"
+    });
+    calendar.render();
+
+    // === 日単位タイムスケジュール ===
+    var dayScheduleEl = document.getElementById("day-schedule");
+    var daySchedule = new FullCalendar.Calendar(dayScheduleEl, {
+      initialView: "timeGridDay",
+      locale: "ja",
+      slotMinTime: "06:00:00",
+      slotMaxTime: "24:00:00",
+      allDaySlot: false,
+      displayEventTime: false,
+      eventOverlap: true,
+      slotEventOverlap: true,
+      headerToolbar: {
+        left: "title",
+        center: "",
+        right: "today prev,next"
+      },
+      buttonText: { today: "今日" },
+      events: function(fetchInfo, successCallback, failureCallback) {
+        var selectedMeds = getSelectedMeds();
+        var query = selectedMeds.length > 0 ? "?meds=" + selectedMeds.join(",") : "";
+        fetch("<%= day_schedule_events_patients_path(format: :json) %>" + query)
+          .then(r => r.json())
+          .then(data => successCallback(data))
+          .catch(err => failureCallback(err));
+      },
+      height: "480px"
+    });
+    daySchedule.render();
+
+    // ✅ チェックボックス変更時に両方更新
+    document.querySelectorAll(".med-toggle").forEach(function(cb) {
+      cb.addEventListener("change", function() {
+        calendar.refetchEvents();
+        daySchedule.refetchEvents();
+      });
+    });
+  });
+</script>
+
+
+
+
+
+

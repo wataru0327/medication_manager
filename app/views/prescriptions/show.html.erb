@@ -70,9 +70,16 @@
 
 <%# 💊 薬局ログイン時のみステータス操作を表示 %>
 <% if current_user&.pharmacy? %>
-  <%= turbo_frame_tag dom_id(@prescription, :status_button) do %>
-    <%= render "prescriptions/status_button", prescription: @prescription %>
-  <% end %>
+  <div style="margin-top: 1em;">
+    <%= button_to "受付開始", update_status_prescription_path(@prescription, status: :accepted),
+                  method: :post, class: "btn btn-warning" %>
+
+    <%= button_to "調剤開始", update_status_prescription_path(@prescription, status: :processing),
+                  method: :post, class: "btn btn-primary" %>
+
+    <%= button_to "受け渡し完了", update_status_prescription_path(@prescription, status: :completed),
+                  method: :post, class: "btn btn-success" %>
+  </div>
 <% end %>
 
 <hr>
@@ -82,7 +89,7 @@
   <% latest_status = @prescription.status_updates.order(created_at: :desc).first %>
   <p>
     <strong><%= latest_status.status_label %></strong>
-    （更新者: <%= latest_status.pharmacy.name %> /
+    （更新者: <%= latest_status.pharmacy&.name || "患者" %> /
      更新日時: <%= latest_status.created_at.strftime("%Y年%m月%d日 %H:%M") %>）
   </p>
 <% else %>
@@ -98,11 +105,12 @@
                       .transform_values { |records| records.max_by(&:created_at) } %>
 
   <ul>
-    <% ["accepted", "processing", "completed"].each do |status| %>
+    <% ["pending", "accepted", "processing", "completed"].each do |status| %>
       <% if latest_statuses[status] %>
         <li>
-          <%= latest_statuses[status].pharmacy.name %>：
+          <%= latest_statuses[status].pharmacy&.name || "患者" %>：
           <%= case status
+              when "pending"    then "患者が保有中"
               when "accepted"   then "受付開始"
               when "processing" then "調剤開始"
               when "completed"  then "受け渡し"
@@ -146,7 +154,29 @@
     <span style="color: #888;">|</span>
     <%= link_to "薬局トップページへ戻る", pharmacy_home_path, class: "btn btn-secondary" %>
   </div>
+
+<% elsif current_user&.patient? %>
+  <%# 👤 患者ログイン時のみ受け取りボタンを表示 %>
+  <div style="margin-top: 1em;">
+    <% latest_status = @prescription.status_updates.order(created_at: :desc).first %>
+
+    <% if latest_status&.status == "pending" %>
+      <%= button_to "この処方箋を受け取る",
+                    receive_prescription_path(@prescription),
+                    method: :post,
+                    class: "btn btn-success",
+                    data: { turbo_confirm: "この処方箋を受け取りますか？" } %>
+    <% else %>
+      <button class="btn btn-secondary" disabled>この処方箋を受け取り済み</button>
+    <% end %>
+  </div>
+
+  <div style="margin-top: 1em;">
+    <%= link_to "患者トップページへ戻る", patient_home_path, class: "btn btn-secondary" %>
+  </div>
 <% end %>
+
+
 
 
 

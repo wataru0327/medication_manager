@@ -308,3 +308,9 @@ button, .btn {
 .field_with_errors select,
 .field_with_errors textarea {
 }
+
+.fc-timegrid-event {
+  position: relative !important;
+  left: 0 !important;
+  width: 100% !important;  /* ← 横並び禁止 */
+}

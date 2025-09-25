@@ -1,26 +1,26 @@
 class PrescriptionsController < ApplicationController
-  before_action :set_prescription, only: %i[ show edit update destroy qrcode ]
+  before_action :set_prescription, only: %i[ show edit update destroy qrcode receive ]
 
   # GET /prescriptions
   def index
-    # ✅ 自分（ログイン中の医師）が作った処方箋だけ表示
     if current_user&.doctor?
       @prescriptions = Prescription.where(doctor_id: current_user.id)
                                    .includes(:patient, :doctor, :prescription_items)
                                    .order(created_at: :desc)
     else
-      @prescriptions = Prescription.none
       redirect_to root_path, alert: "アクセス権限がありません"
     end
   end
 
   # GET /prescriptions/1
-  def show; end
+  def show
+    # @prescription をビューで表示するだけ
+  end
 
   # GET /prescriptions/new
   def new
     @prescription = Prescription.new
-    @prescription.prescription_items.build   # フォームで1行目を表示
+    @prescription.prescription_items.build
   end
 
   # GET /prescriptions/1/edit
@@ -79,9 +79,9 @@ class PrescriptionsController < ApplicationController
     if params[:q].present?
       keyword = params[:q].to_s.strip
 
-      if keyword.match?(/\A\d+\z/) # 数字のみなら完全一致
+      if keyword.match?(/\A\d+\z/)
         @prescriptions = Prescription.includes(:patient, :doctor).where(patient_number: keyword)
-      else # 名前検索は部分一致
+      else
         @prescriptions = Prescription.includes(:patient, :doctor).where("patient_name LIKE ?", "%#{keyword}%")
       end
     else
@@ -95,13 +95,25 @@ class PrescriptionsController < ApplicationController
     redirect_to qrcode_prescription_path(@prescription)
   end
 
-  # ✅ QRコード用：tokenから患者情報を返すAPI
   def find_by_token
     prescription = Prescription.includes(:patient).find_by(qr_token: params[:token])
     if prescription&.patient
       render json: { patient_name: prescription.patient.name }
     else
       render json: { patient_name: nil }
+    end
+  end
+
+  def receive
+    if current_user.patient? && @prescription.patient_id == current_user.id
+      StatusUpdate.create!(
+        prescription: @prescription,
+        pharmacy_id: nil,
+        status: :pending
+      )
+      redirect_to @prescription, notice: "処方箋を受け取りました"
+    else
+      redirect_to root_path, alert: "処方箋を受け取れません"
     end
   end
 
@@ -119,15 +131,12 @@ class PrescriptionsController < ApplicationController
     )
   end
 
-  # ✅ 有効期限補完と患者検索を共通処理にまとめた
   def set_defaults(attrs)
-    # expires_at が空なら issued_at + 4日を自動補完
     if attrs[:issued_at].present? && attrs[:expires_at].blank?
       issued_time = Time.zone.parse(attrs[:issued_at].to_s)
       attrs[:expires_at] = issued_time + 4.days if issued_time
     end
 
-    # 患者番号から patient を特定
     if attrs[:patient_number].present?
       patient = User.find_by(patient_number: attrs[:patient_number], role: :patient)
       if patient
@@ -142,6 +151,7 @@ class PrescriptionsController < ApplicationController
     attrs
   end
 end
+
 
 
 

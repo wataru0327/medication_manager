@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_23_031546) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_24_085910) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -91,7 +91,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_23_031546) do
 
   create_table "status_updates", force: :cascade do |t|
     t.bigint "prescription_id", null: false
-    t.bigint "pharmacy_id", null: false
+    t.bigint "pharmacy_id"
     t.integer "status", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

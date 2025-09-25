@@ -2,3 +2,13 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "./prescription_items"
+
+// FullCalendar を読み込み
+import { Calendar } from "@fullcalendar/core"
+import dayGridPlugin from "@fullcalendar/daygrid"
+import interactionPlugin from "@fullcalendar/interaction"
+import jaLocale from "@fullcalendar/core/locales/ja"
+
+// グローバルに使えるように window に登録
+window.FullCalendar = { Calendar, dayGridPlugin, interactionPlugin, jaLocale }
+
