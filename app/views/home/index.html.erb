@@ -1,23 +1,65 @@
-<h1>ようこそ Medication Manager</h1>
-<p>ご自身の役割を選んでください</p>
+<!-- app/views/home/index.html.erb -->
 
-<div class="role-selection">
-  <div class="role-box">
-    <h2>患者の方はこちらから</h2>
-    <%= link_to "新規登録", new_patient_registration_path, class: "btn" %>
-    <%= link_to "ログイン", new_patient_session_path, class: "btn" %>
-  </div>
+<div style="max-width: 1000px; margin: 80px auto; text-align: center;">
 
-  <div class="role-box">
-    <h2>医師の方はこちらから</h2>
-    <%= link_to "新規登録", new_doctor_registration_path, class: "btn" %>
-    <%= link_to "ログイン", new_doctor_session_path, class: "btn" %>
-  </div>
+  <!-- タイトル -->
+  <h1 style="font-size: 36px; font-weight: bold; color: #333; margin-bottom: 15px;">
+    💊<span style="color:#007bff;">Medication Manager</span>へようこそ 
+  </h1>
 
-  <div class="role-box">
-    <h2>薬局の方はこちらから</h2>
-    <%= link_to "新規登録", new_pharmacy_registration_path, class: "btn" %>
-    <%= link_to "ログイン", new_pharmacy_session_path, class: "btn" %>
+  <!-- サブタイトル -->
+  <p style="font-size: 18px; color: #666; margin-bottom: 60px;">
+    ご自身の目的を選んでください
+  </p>
+
+  <!-- 役割選択カード（横一列固定） -->
+  <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: nowrap;">
+
+    <!-- 患者 -->
+    <div style="flex: 1; max-width: 280px; padding: 30px; height: 180px;
+                background: #f1f8ff; border: 2px solid #cce0ff; border-radius: 12px;
+                display: flex; flex-direction: column; justify-content: center; align-items: center;
+                transition: 0.3s;">
+      <h2 style="font-size: 20px; color:#0056b3; margin-bottom: 20px;">🤧 患者の方はこちらから</h2>
+      <div>
+        <%= link_to "新規登録", new_patient_registration_path, style: "margin-right:10px; color:#0056b3; font-weight:bold;" %>
+        <%= link_to "ログイン", new_patient_session_path, style: "color:#0056b3; font-weight:bold;" %>
+      </div>
+    </div>
+
+    <!-- 医師 -->
+    <div style="flex: 1; max-width: 280px; padding: 30px; height: 180px;
+                background: #f9f9f9; border: 2px solid #ddd; border-radius: 12px;
+                display: flex; flex-direction: column; justify-content: center; align-items: center;
+                transition: 0.3s;">
+      <h2 style="font-size: 20px; color:#333; margin-bottom: 20px;">🩺 医師の方はこちらから</h2>
+      <div>
+        <%= link_to "新規登録", new_doctor_registration_path, style: "margin-right:10px; color:#333; font-weight:bold;" %>
+        <%= link_to "ログイン", new_doctor_session_path, style: "color:#333; font-weight:bold;" %>
+      </div>
+    </div>
+
+    <!-- 薬局 -->
+    <div style="flex: 1; max-width: 280px; padding: 30px; height: 180px;
+                background: #fff8f1; border: 2px solid #ffe0cc; border-radius: 12px;
+                display: flex; flex-direction: column; justify-content: center; align-items: center;
+                transition: 0.3s;">
+      <h2 style="font-size: 20px; color:#b35c00; margin-bottom: 20px;">🏥 薬局の方はこちらから</h2>
+      <div>
+        <%= link_to "新規登録", new_pharmacy_registration_path, style: "margin-right:10px; color:#b35c00; font-weight:bold;" %>
+        <%= link_to "ログイン", new_pharmacy_session_path, style: "color:#b35c00; font-weight:bold;" %>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<!-- ✅ ホバーアニメーション -->
+<style>
+  div[style*="transition: 0.3s;"]:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  }
+</style>
+
 

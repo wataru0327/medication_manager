@@ -1,19 +1,21 @@
 # app/controllers/patients_controller.rb
 class PatientsController < ApplicationController
   before_action :authenticate_user!
-  before_action :ensure_patient!, only: [:home, :scan_qr, :received, :calendar, :calendar_events, :day_schedule_events]
+  before_action :ensure_patient!, only: [
+    :home, :scan_qr, :received, :calendar,
+    :calendar_events, :day_schedule_events, :find_by_token
+  ]
 
   require "digest"
 
-  # 💊 受け取った処方箋一覧ページ（完了済みのみ）
+  # 💊 受け取った処方箋一覧ページ（全ステータス表示）
   def received
     @received_prescriptions = Prescription
-      .joins(:status_updates)
-      .where(patient_id: current_user.id, status_updates: { status: :completed })
+      .where(patient_id: current_user.id) # ✅ 自分の処方箋だけ
       .includes(:status_updates, prescription_items: [:medication])
   end
 
-  # 💊 カレンダーページ表示用
+  # 💊 カレンダーページ表示用（完了済みのみ）
   def calendar
     @received_prescriptions = Prescription
       .joins(:status_updates)
@@ -90,7 +92,6 @@ class PatientsController < ApplicationController
           date = completed_at.to_date + i
 
           if item.medication.timing == "after_meal"
-            # 🍽️ 朝・昼・夜の3回（瞬間イベント = end を付けない）
             ["08:00", "12:00", "18:00"].each do |time|
               events << {
                 id: "time-#{item.id}-#{i}-#{time}",
@@ -101,7 +102,6 @@ class PatientsController < ApplicationController
               }
             end
           else
-            # 通常の1回（瞬間イベント = end を付けない）
             start_time = case item.medication.timing
                          when "morning"    then "08:00"
                          when "noon"       then "12:00"
@@ -125,6 +125,17 @@ class PatientsController < ApplicationController
     render json: events
   end
 
+  # 💊 QRコードで処方箋を検索（本人のみアクセス可）
+  def find_by_token
+    prescription = Prescription.find_by(qr_token: params[:token])
+
+    if prescription && prescription.patient_id == current_user.id
+      render json: { patient_name: current_user.name, id: prescription.id }
+    else
+      render json: { error: "これはあなたの処方箋ではありません" }, status: :forbidden
+    end
+  end
+
   private
 
   def ensure_patient!
@@ -137,6 +148,7 @@ class PatientsController < ApplicationController
     "hsl(#{hue}, 70%, 80%)"
   end
 end
+
 
 
 

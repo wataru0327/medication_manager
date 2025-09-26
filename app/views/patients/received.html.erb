@@ -15,6 +15,7 @@
   <tbody>
     <% @received_prescriptions.each do |prescription| %>
       <% latest_status = prescription.status_updates.order(created_at: :desc).first %>
+
       <tr>
         <td><%= prescription.hospital_name %></td>
         <td><%= prescription.doctor.name %></td>
@@ -53,12 +54,6 @@
     <% end %>
   </tbody>
 </table>
-
-<hr>
-
-<div style="margin-top: 1em;">
-  <%= link_to "トップページへ戻る", patient_home_path, class: "btn btn-secondary" %>
-</div>
 
 
 

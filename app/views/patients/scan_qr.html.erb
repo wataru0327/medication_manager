@@ -6,10 +6,10 @@
 <canvas id="canvas" hidden></canvas>
 
 <!-- QRコード読み取り結果を表示 -->
-<p id="result" style="margin-top: 1em; font-weight: bold; color: green;"></p>
+<p id="result" style="margin-top: 1em; font-weight: bold;"></p>
 
 <!-- 処方箋確認フォーム -->
-<%= form_with url: scan_qr_patients_path, method: :get, local: true do %>
+<%= form_with url: "#", method: :get, local: true, id: "prescription-form" do %>
   <%= hidden_field_tag :token, nil, id: "qr_token" %>
   <%= submit_tag "自分の処方箋を確認", class: "btn btn-primary" %>
 <% end %>
@@ -26,6 +26,7 @@
   const context = canvas.getContext("2d");
   const resultEl = document.getElementById("result");
   const qrTokenInput = document.getElementById("qr_token");
+  const form = document.getElementById("prescription-form");
 
   // カメラ起動
   navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
@@ -54,24 +55,38 @@
       if (code) {
         qrTokenInput.value = code.data; // hidden_field に格納
 
-        // ✅ Ajaxで処方箋情報を取得（患者専用APIを使用）
+        // ✅ Ajaxで処方箋情報を確認
         fetch(`/patients/find_by_token?token=${code.data}`)
           .then(response => response.json())
           .then(data => {
-            if (data.patient_name) {
+            if (data.id && data.patient_name) {
+              // 自分の処方箋
               resultEl.textContent = `あなたの処方箋が確認できました (${data.patient_name} さん)`;
+              resultEl.style.color = "green";
+
+              // フォームの遷移先を詳細ページに変更
+              form.action = `/prescriptions/${data.id}`;
+              form.method = "get";
             } else {
+              // 他人の処方箋 → 詳細は出さない
               resultEl.textContent = "これはあなたの処方箋ではありません";
               resultEl.style.color = "red";
+
+              // フォーム無効化（押せても遷移しないようにする）
+              form.action = "#";
             }
           })
           .catch(() => {
-            resultEl.textContent = "QRコードを読み取りました: " + code.data;
+            resultEl.textContent = "QRコードを読み取りましたが確認できませんでした。";
+            resultEl.style.color = "orange";
+            form.action = "#";
           });
       }
     }
     requestAnimationFrame(tick);
   }
 </script>
+
+
 
 

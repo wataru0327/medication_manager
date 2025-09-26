@@ -71,14 +71,18 @@
 <%# 💊 薬局ログイン時のみステータス操作を表示 %>
 <% if current_user&.pharmacy? %>
   <div style="margin-top: 1em;">
-    <%= button_to "受付開始", update_status_prescription_path(@prescription, status: :accepted),
-                  method: :post, class: "btn btn-warning" %>
+    <% latest_status = @prescription.status_updates.order(created_at: :desc).first %>
 
-    <%= button_to "調剤開始", update_status_prescription_path(@prescription, status: :processing),
-                  method: :post, class: "btn btn-primary" %>
-
-    <%= button_to "受け渡し完了", update_status_prescription_path(@prescription, status: :completed),
-                  method: :post, class: "btn btn-success" %>
+    <% if latest_status&.status == "accepted" %>
+      <%= button_to "調剤開始", update_status_prescription_path(@prescription, status: :processing),
+                    method: :post, class: "btn btn-primary" %>
+    <% elsif latest_status&.status == "processing" %>
+      <button class="btn btn-secondary" disabled>調剤中</button>
+    <% elsif latest_status&.status == "completed" %>
+      <button class="btn btn-success" disabled>受け渡し済み</button>
+    <% else %>
+      <button class="btn btn-secondary" disabled>調剤不可</button>
+    <% end %>
   </div>
 <% end %>
 
@@ -160,7 +164,7 @@
   <div style="margin-top: 1em;">
     <% latest_status = @prescription.status_updates.order(created_at: :desc).first %>
 
-    <% if latest_status&.status == "pending" %>
+    <% if latest_status.nil? || latest_status.status == "pending" %>
       <%= button_to "この処方箋を受け取る",
                     receive_prescription_path(@prescription),
                     method: :post,
@@ -175,6 +179,8 @@
     <%= link_to "患者トップページへ戻る", patient_home_path, class: "btn btn-secondary" %>
   </div>
 <% end %>
+
+
 
 
 

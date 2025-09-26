@@ -1,10 +1,8 @@
-<!-- app/views/pharmacies/home.html.erb -->
-
 <div style="max-width: 1000px; margin: 50px auto; text-align: center;">
 
   <!-- タイトル -->
   <h1 style="font-size: 32px; font-weight: bold; color: #333; margin-bottom: 25px;">
-    薬局トップページ
+    患者さん専用ページ
   </h1>
 
   <!-- 挨拶 -->
@@ -15,23 +13,23 @@
   <!-- 横並びカードメニュー -->
   <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 120px;">
 
-    <%= link_to "📷 処方箋を読み込み<br>（QRコード）".html_safe, scan_qr_pharmacies_path,
-          style: "flex: 1; min-width: 250px; max-width: 280px; height: 120px;
-                  display: flex; flex-direction: column; align-items: center; justify-content: center;
+    <%= link_to "📱 処方箋を受け取る<br>（QRコード）".html_safe, scan_qr_patients_path,
+          style: "flex: 1; min-width: 250px; max-width: 280px; height: 120px; 
+                  display: flex; justify-content: center; align-items: center; text-align: center;
                   background: #f1f8ff; border: 2px solid #cce0ff; border-radius: 12px;
                   font-size: 18px; color: #0056b3; font-weight: bold;
                   text-decoration: none; transition: 0.3s;" %>
 
-    <%= link_to "📋 受付中の処方箋一覧を見る", accepted_prescriptions_pharmacies_path,
-          style: "flex: 1; min-width: 250px; max-width: 280px; height: 120px;
-                  display: flex; align-items: center; justify-content: center;
+    <%= link_to "📋 受け取った処方箋一覧", received_patients_path,
+          style: "flex: 1; min-width: 250px; max-width: 280px; height: 120px; 
+                  display: flex; justify-content: center; align-items: center; text-align: center;
                   background: #f9f9f9; border: 2px solid #ddd; border-radius: 12px;
                   font-size: 18px; color: #333; font-weight: bold;
                   text-decoration: none; transition: 0.3s;" %>
 
-    <%= link_to "✅ 受け渡し済み処方箋を見る", completed_prescriptions_pharmacies_path,
-          style: "flex: 1; min-width: 250px; max-width: 280px; height: 120px;
-                  display: flex; align-items: center; justify-content: center;
+    <%= link_to "📅 お薬カレンダーを見る", calendar_patients_path,
+          style: "flex: 1; min-width: 250px; max-width: 280px; height: 120px; 
+                  display: flex; justify-content: center; align-items: center; text-align: center;
                   background: #fff8f1; border: 2px solid #ffe0cc; border-radius: 12px;
                   font-size: 18px; color: #b35c00; font-weight: bold;
                   text-decoration: none; transition: 0.3s;" %>
@@ -46,6 +44,7 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   }
 </style>
+
 
 
 

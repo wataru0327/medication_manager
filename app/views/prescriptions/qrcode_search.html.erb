@@ -1,30 +1,32 @@
-<h1>QRコード作成</h1>
+<h1>処方箋QRコード作成</h1>
 
 <%= form_with url: qrcode_search_prescriptions_path, method: :get, local: true do %>
   <div>
     <%= label_tag :q, "患者名またはユーザー番号で検索" %><br>
-    <%= text_field_tag :q, params[:q], placeholder: "例: 山田太郎 または 12345", style: "width: 400px;" %>
+    <%= text_field_tag :q, params[:q], placeholder: "例: 山田太郎 または 12345", class: "search-input" %>
     <%= submit_tag "検索", class: "btn btn-primary" %>
   </div>
 <% end %>
 
 <hr>
 
-<% if @prescriptions.any? %>
+<% own_prescriptions = @prescriptions.select { |p| p.doctor_id == current_user.id } %>
+
+<% if own_prescriptions.any? %>
   <h2>検索結果</h2>
-  <table border="1" cellpadding="6" cellspacing="0">
+  <table class="prescriptions-table">
     <thead>
       <tr>
         <th>患者</th>
         <th>ユーザー番号</th>
         <th>医師</th>
         <th>発行日</th>
-        <th>処方箋確認</th> <!-- 👈 新しい列 -->
+        <th>処方箋確認</th>
         <th>QRコード作成</th>
       </tr>
     </thead>
     <tbody>
-      <% @prescriptions.each do |prescription| %>
+      <% own_prescriptions.each do |prescription| %>
         <tr>
           <td><%= prescription.patient_name %></td>
           <td><%= prescription.patient_number %></td>
@@ -49,6 +51,9 @@
 
 <br>
 <%= link_to "医師トップページへ戻る", doctor_home_path %>
+
+
+
 
 
 

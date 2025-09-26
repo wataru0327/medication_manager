@@ -314,3 +314,31 @@ button, .btn {
   left: 0 !important;
   width: 100% !important;  /* ← 横並び禁止 */
 }
+
+/* 検索入力欄 */
+.search-input {
+  width: 400px;
+  padding: 6px 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* 処方箋一覧テーブル */
+.prescriptions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1em;
+}
+
+.prescriptions-table th,
+.prescriptions-table td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.prescriptions-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}

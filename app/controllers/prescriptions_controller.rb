@@ -1,5 +1,5 @@
 class PrescriptionsController < ApplicationController
-  before_action :set_prescription, only: %i[ show edit update destroy qrcode receive ]
+  before_action :set_prescription, only: %i[ show edit update destroy qrcode receive update_status ]
 
   # GET /prescriptions
   def index
@@ -115,6 +115,25 @@ class PrescriptionsController < ApplicationController
     else
       redirect_to root_path, alert: "処方箋を受け取れません"
     end
+  end
+
+  # ✅ 薬局がステータス更新
+  def update_status
+    latest_status = @prescription.status_updates.order(created_at: :desc).first
+
+    # 「調剤開始」は直前が accepted(1) のときのみ可能
+    if params[:status] == "processing" && latest_status&.status != "accepted"
+      redirect_to @prescription, alert: "現在のステータスでは調剤開始できません"
+      return
+    end
+
+    StatusUpdate.create!(
+      prescription: @prescription,
+      pharmacy: current_user,
+      status: params[:status]
+    )
+
+    redirect_to @prescription, notice: "ステータスを更新しました"
   end
 
   private
