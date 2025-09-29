@@ -69,13 +69,13 @@
     display: flex !important;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: nowrap;       /* ✅ 改行禁止 */
+    flex-wrap: nowrap;
   }
   .fc .fc-toolbar-title {
-    font-size: 16px;         /* ✅ タイトル文字を少し抑える */
-    white-space: nowrap;     /* ✅ 折り返さない */
+    font-size: 16px;
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* ✅ 長すぎたら省略 */
+    text-overflow: ellipsis;
   }
   .fc .fc-button {
     font-size: 12px;
@@ -84,7 +84,7 @@
 </style>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("turbo:load", function() {
     function getSelectedMeds() {
       return Array.from(document.querySelectorAll(".med-toggle:checked"))
                   .map(cb => cb.dataset.med);
@@ -92,65 +92,121 @@
 
     // === 月間カレンダー ===
     var calendarEl = document.getElementById("calendar");
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: "dayGridMonth",
-      locale: "ja",
-      headerToolbar: {
-        left: "title",
-        center: "",
-        right: "today prev,next"
-      },
-      buttonText: { today: "今日" },
-      events: function(fetchInfo, successCallback, failureCallback) {
-        var selectedMeds = getSelectedMeds();
-        var query = selectedMeds.length > 0 ? "?meds=" + selectedMeds.join(",") : "";
-        fetch("<%= calendar_events_patients_path(format: :json) %>" + query)
-          .then(r => r.json())
-          .then(data => successCallback(data))
-          .catch(err => failureCallback(err));
-      },
-      height: "auto"
-    });
-    calendar.render();
+    if (calendarEl) {
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+        locale: "ja",
+        headerToolbar: { left: "title", center: "", right: "today prev,next" },
+        buttonText: { today: "今日" },
+        events: function(fetchInfo, successCallback, failureCallback) {
+          var selectedMeds = getSelectedMeds();
+          var query = selectedMeds.length > 0 ? "?meds=" + selectedMeds.join(",") : "";
+          fetch("<%= calendar_events_patients_path(format: :json) %>" + query)
+            .then(r => r.json())
+            .then(data => successCallback(data))
+            .catch(err => failureCallback(err));
+        },
+        height: "auto"
+      });
+      calendar.render();
+    }
 
     // === 日単位タイムスケジュール ===
     var dayScheduleEl = document.getElementById("day-schedule");
-    var daySchedule = new FullCalendar.Calendar(dayScheduleEl, {
-      initialView: "timeGridDay",
-      locale: "ja",
-      slotMinTime: "06:00:00",
-      slotMaxTime: "24:00:00",
-      allDaySlot: false,
-      displayEventTime: false,
-      eventOverlap: true,
-      slotEventOverlap: true,
-      headerToolbar: {
-        left: "title",
-        center: "",
-        right: "today prev,next"
-      },
-      buttonText: { today: "今日" },
-      events: function(fetchInfo, successCallback, failureCallback) {
-        var selectedMeds = getSelectedMeds();
-        var query = selectedMeds.length > 0 ? "?meds=" + selectedMeds.join(",") : "";
-        fetch("<%= day_schedule_events_patients_path(format: :json) %>" + query)
-          .then(r => r.json())
-          .then(data => successCallback(data))
-          .catch(err => failureCallback(err));
-      },
-      height: "480px"
-    });
-    daySchedule.render();
+    if (dayScheduleEl) {
+      var daySchedule = new FullCalendar.Calendar(dayScheduleEl, {
+        initialView: "timeGridDay",
+        locale: "ja",
+        slotMinTime: "06:00:00",
+        slotMaxTime: "24:00:00",
+        allDaySlot: false,
+        displayEventTime: false,
+        eventOverlap: true,
+        slotEventOverlap: true,
+        headerToolbar: { left: "title", center: "", right: "today prev,next" },
+        buttonText: { today: "今日" },
+        events: function(fetchInfo, successCallback, failureCallback) {
+          var selectedMeds = getSelectedMeds();
+          var query = selectedMeds.length > 0 ? "?meds=" + selectedMeds.join(",") : "";
+          fetch("<%= day_schedule_events_patients_path(format: :json) %>" + query)
+            .then(r => r.json())
+            .then(data => successCallback(data))
+            .catch(err => failureCallback(err));
+        },
+        height: "480px",
 
-    // ✅ チェックボックス変更時に両方更新
-    document.querySelectorAll(".med-toggle").forEach(function(cb) {
-      cb.addEventListener("change", function() {
-        calendar.refetchEvents();
-        daySchedule.refetchEvents();
+        // ✅ イベント内にチェックボックス追加（飲み忘れ防止）
+        eventContent: function(arg) {
+          let medName = arg.event.title;
+
+          let checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.className = "med-check";
+          checkbox.dataset.med = medName;
+          checkbox.dataset.itemId = arg.event.extendedProps.prescription_item_id;
+
+          // 👇 DBの保存状態を反映
+          if (arg.event.extendedProps.taken) {
+            checkbox.checked = true;
+          }
+
+          // Ajax保存
+          checkbox.addEventListener("change", function() {
+            if (checkbox.checked) {
+              fetch("/medication_intakes", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+                },
+                body: JSON.stringify({
+                  medication_intake: {
+                    prescription_item_id: checkbox.dataset.itemId,
+                    taken_at: new Date().toISOString()
+                  }
+                })
+              });
+            } else {
+              // ✅ Destroy は /medication_intakes/:id に DELETE
+              fetch("/medication_intakes/" + checkbox.dataset.itemId, {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+                }
+              });
+            }
+          });
+
+          let label = document.createElement("span");
+          label.style.marginLeft = "6px";
+          label.textContent = medName;
+
+          let container = document.createElement("div");
+          container.style.display = "flex";
+          container.style.alignItems = "center";
+          container.appendChild(checkbox);
+          container.appendChild(label);
+
+          return { domNodes: [container] };
+        }
       });
-    });
+      daySchedule.render();
+
+      // ✅ フィルタ更新
+      document.querySelectorAll(".med-toggle").forEach(function(cb) {
+        cb.addEventListener("change", function() {
+          calendar.refetchEvents();
+          daySchedule.refetchEvents();
+        });
+      });
+    }
   });
 </script>
+
+
+
+
 
 
 

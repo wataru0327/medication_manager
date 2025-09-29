@@ -37,7 +37,9 @@
       requestAnimationFrame(tick);
     })
     .catch(err => {
-      alert("カメラが利用できません: " + err);
+      resultEl.textContent = "カメラが利用できません。ブラウザを更新して再試行してください。";
+      resultEl.style.color = "red";
+      console.error("カメラ起動失敗:", err);
     });
 
   // QR解析ループ
@@ -63,16 +65,12 @@
               // 自分の処方箋
               resultEl.textContent = `あなたの処方箋が確認できました (${data.patient_name} さん)`;
               resultEl.style.color = "green";
-
-              // フォームの遷移先を詳細ページに変更
               form.action = `/prescriptions/${data.id}`;
               form.method = "get";
             } else {
-              // 他人の処方箋 → 詳細は出さない
+              // 他人の処方箋
               resultEl.textContent = "これはあなたの処方箋ではありません";
               resultEl.style.color = "red";
-
-              // フォーム無効化（押せても遷移しないようにする）
               form.action = "#";
             }
           })
@@ -86,6 +84,8 @@
     requestAnimationFrame(tick);
   }
 </script>
+
+
 
 
 

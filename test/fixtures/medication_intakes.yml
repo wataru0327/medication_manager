@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  prescription_item: one
+  taken_at: 2025-09-26 11:54:17
+
+two:
+  user: two
+  prescription_item: two
+  taken_at: 2025-09-26 11:54:17

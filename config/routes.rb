@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  # ✅ 飲み忘れ防止チェック（服薬記録）
+  resources :medication_intakes, only: [:create, :destroy]
+
   # 共通 User モデルを使う（sessions / registrations は自作するので skip）
   devise_for :users, skip: [:sessions, :registrations]
 
@@ -39,7 +42,7 @@ Rails.application.routes.draw do
       get :received
       get :calendar                                     # 📅 カレンダー画面
       get :calendar_events, defaults: { format: :json } # 📅 月間カレンダー用JSON
-      get :day_schedule_events, defaults: { format: :json } # 🕒 タイムスケジュール用JSON ← 追加
+      get :day_schedule_events, defaults: { format: :json } # 🕒 タイムスケジュール用JSON
     end
   end
 

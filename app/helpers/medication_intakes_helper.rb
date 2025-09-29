@@ -1,0 +1,2 @@
+module MedicationIntakesHelper
+end
