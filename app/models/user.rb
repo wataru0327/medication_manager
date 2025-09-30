@@ -1,9 +1,9 @@
 class User < ApplicationRecord
-  # Devise のモジュール
+  # Devise
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  # ロール定義
+  # enum (整数型に対応)
   enum role: { doctor: 0, pharmacy: 1, patient: 2 }
 
   # 関連付け
@@ -24,18 +24,15 @@ class User < ApplicationRecord
            dependent: :destroy,
            inverse_of: :pharmacy
 
-  # QRコード読み取り履歴
   has_many :qr_scans, dependent: :destroy
-
-  # 飲み忘れ防止チェック（服薬記録）
   has_many :medication_intakes, dependent: :destroy
 
   # バリデーション
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
-  validates :patient_number, uniqueness: true, allow_nil: true
+  validates :patient_number, uniqueness: true, numericality: { only_integer: true }, allow_nil: true
 
-  # コールバック（患者のみ patient_number を自動採番）
+  # コールバック（患者のみ patient_number 自動採番）
   before_create :assign_patient_number, if: :patient?
 
   private
