@@ -1,7 +1,7 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 import "@hotwired/turbo-rails"
 import "controllers"
-import "./prescription_items"
+import "prescription_items"   // ✅ importmap に pin した名前をそのまま使う
 
 // FullCalendar を読み込み
 import { Calendar } from "@fullcalendar/core"
@@ -11,4 +11,5 @@ import jaLocale from "@fullcalendar/core/locales/ja"
 
 // グローバルに使えるように window に登録
 window.FullCalendar = { Calendar, dayGridPlugin, interactionPlugin, jaLocale }
+
 
