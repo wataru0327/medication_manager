@@ -1,7 +1,8 @@
 class User < ApplicationRecord
   # Devise
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :validatable
+         # ← :rememberable を削除
 
   # enum (整数型に対応)
   enum role: { doctor: 0, pharmacy: 1, patient: 2 }
