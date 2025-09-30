@@ -63,6 +63,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_01_000000) do
     t.index ["qr_token"], name: "index_prescriptions_on_qr_token", unique: true
   end
 
+  create_table "status_updates", force: :cascade do |t|
+    t.bigint "prescription_id", null: false
+    t.bigint "pharmacy_id"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pharmacy_id"], name: "index_status_updates_on_pharmacy_id"
+    t.index ["prescription_id"], name: "index_status_updates_on_prescription_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -83,4 +93,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_01_000000) do
   add_foreign_key "prescription_items", "prescriptions"
   add_foreign_key "prescriptions", "users", column: "doctor_id"
   add_foreign_key "prescriptions", "users", column: "patient_id"
+  add_foreign_key "status_updates", "prescriptions"
+  add_foreign_key "status_updates", "users", column: "pharmacy_id"
 end
