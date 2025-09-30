@@ -12,6 +12,7 @@ pin "@fullcalendar/daygrid", to: "https://cdn.skypack.dev/@fullcalendar/daygrid@
 pin "@fullcalendar/interaction", to: "https://cdn.skypack.dev/@fullcalendar/interaction@6.1.15"
 pin "@fullcalendar/core/locales/ja", to: "https://cdn.skypack.dev/@fullcalendar/core/locales/ja"
 
-# ✅ prescription_items を追加
-pin "prescription_items", to: "prescription_items.js"
+# ✅ prescription_items を追加（正しいパス指定）
+pin "prescription_items", to: "/app/javascript/prescription_items.js"
+
 
