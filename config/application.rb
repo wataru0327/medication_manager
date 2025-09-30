@@ -2,6 +2,9 @@ require_relative "boot"
 
 require "rails/all"
 
+# ✅ dotenv を読み込む（開発・テスト環境でのみ）
+require 'dotenv/load' if %w[development test].include? ENV['RAILS_ENV']
+
 Bundler.require(*Rails.groups)
 
 module MedicationManager
@@ -20,4 +23,3 @@ module MedicationManager
     config.time_zone = 'Tokyo'         # タイムゾーンを日本に
   end
 end
-
