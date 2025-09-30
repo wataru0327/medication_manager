@@ -342,3 +342,360 @@ button, .btn {
   background-color: #f5f5f5;
   font-weight: bold;
 }
+
+/* app/assets/stylesheets/doctors_home.css */
+
+.doctor-home {
+  max-width: 1000px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+.doctor-home__title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+.doctor-home__greeting {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 40px;
+}
+
+.doctor-home__menu {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 120px; /* ← 下に余白を追加 */
+}
+
+.doctor-home__card {
+  flex: 1;
+  min-width: 220px;
+  max-width: 260px;
+  padding: 25px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  text-align: center;
+  transition: 0.3s;
+}
+
+/* 色バリエーション */
+.doctor-home__card--blue {
+  background: #f1f8ff;
+  border: 2px solid #cce0ff;
+  color: #0056b3;
+}
+
+.doctor-home__card--gray {
+  background: #f9f9f9;
+  border: 2px solid #ddd;
+  color: #333;
+}
+
+.doctor-home__card--orange {
+  background: #fff8f1;
+  border: 2px solid #ffe0cc;
+  color: #b35c00;
+}
+
+.doctor-home__card--green {
+  background: #f1fff5;
+  border: 2px solid #ccffdd;
+  color: #006622;
+}
+
+.doctor-home__card--red {
+  background: #fff5f8;
+  border: 2px solid #ffccd5;
+  color: #a30029;
+}
+
+/* ✅ ホバーアニメーション */
+.doctor-home__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* 共通レイアウト */
+.home-container {
+  max-width: 1000px;
+  margin: 80px auto;
+  text-align: center;
+}
+
+.home-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.home-title .highlight {
+  color: #007bff;
+}
+
+.home-subtitle {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 60px;
+}
+
+/* 役割選択コンテナ */
+.role-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: nowrap;
+}
+
+/* 共通カード */
+.role-card {
+  flex: 1;
+  max-width: 280px;
+  padding: 30px;
+  height: 180px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s;
+}
+
+.role-card h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+/* 患者カード */
+.patient-card {
+  background: #f1f8ff;
+  border: 2px solid #cce0ff;
+}
+
+.patient-card h2 {
+  color: #0056b3;
+}
+
+.patient-link {
+  color: #0056b3;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* 医師カード */
+.doctor-card {
+  background: #f9f9f9;
+  border: 2px solid #ddd;
+}
+
+.doctor-card h2 {
+  color: #333;
+}
+
+.doctor-link {
+  color: #333;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* 薬局カード */
+.pharmacy-card {
+  background: #fff8f1;
+  border: 2px solid #ffe0cc;
+}
+
+.pharmacy-card h2 {
+  color: #b35c00;
+}
+
+.pharmacy-link {
+  color: #b35c00;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* ホバーアニメーション */
+.role-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* --- 薬フォーム用スタイル --- */
+
+/* エラーメッセージ */
+.form-errors {
+  color: red;
+  margin-bottom: 20px;
+}
+
+.form-errors h2 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.form-errors ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+/* フォーム全体 */
+.medication-form {
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: 14px;
+}
+
+/* 入力グループ */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+/* 入力フィールド */
+.form-group input[type="text"],
+.form-group input[type="file"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* テキストエリア */
+.form-group textarea {
+  resize: vertical;
+}
+
+/* ボタン */
+.form-actions {
+  text-align: center;
+}
+
+.form-actions input[type="submit"] {
+  background: #0288d1;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.form-actions input[type="submit"]:hover {
+  background: #0277bd;
+}
+
+/* --- 薬一覧ページ用 --- */
+
+/* 通知メッセージ */
+.notice-text {
+  color: green;
+  font-weight: bold;
+}
+
+/* エラーメッセージ（一覧用） */
+.alert-text {
+  color: red;
+  font-weight: bold;
+}
+
+/* 検索フォーム */
+.search-form {
+  margin-bottom: 20px;
+}
+
+.search-form .form-group {
+  margin-bottom: 10px;
+}
+
+.search-form input[type="text"],
+.search-form select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* ボタン */
+.btn {
+  display: inline-block;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  border: none;
+}
+
+.btn-primary {
+  background: #0288d1;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #0277bd;
+}
+
+.btn-success {
+  background: #43a047;
+  color: #fff;
+}
+
+.btn-success:hover {
+  background: #388e3c;
+}
+
+.btn-secondary {
+  background: #9e9e9e;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: #757575;
+}
+
+/* テーブル */
+.medication-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.medication-table th,
+.medication-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.medication-table th {
+  background: #f5f5f5;
+  font-weight: bold;
+}
+
+/* 最下部リンク */
+.action-links {
+  display: flex;
+  gap: 10px;
+}
+
+

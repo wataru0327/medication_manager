@@ -1,6 +1,6 @@
-<%= form_with(model: medication, local: true) do |form| %>
+<%= form_with(model: medication, local: true, html: { class: "medication-form" }) do |form| %>
   <% if medication.errors.any? %>
-    <div style="color: red">
+    <div class="form-errors">
       <h2><%= medication.errors.count %>件のエラーにより保存できませんでした:</h2>
       <ul>
         <% medication.errors.full_messages.each do |message| %>
@@ -11,23 +11,23 @@
   <% end %>
 
   <!-- 薬の画像 -->
-  <div>
+  <div class="form-group">
     <%= form.label :image, "薬の画像" %><br>
     <%= form.file_field :image, accept: "image/*" %>
   </div>
 
-  <div>
+  <div class="form-group">
     <%= form.label :name, "薬名" %><br>
     <%= form.text_field :name, placeholder: "例: ロキソニン" %>
   </div>
 
-  <div>
+  <div class="form-group">
     <%= form.label :dosage, "用量/１回" %><br>
     <%= form.text_field :dosage, placeholder: "例: 1錠" %>
   </div>
 
   <!-- 服用タイミング -->
-  <div>
+  <div class="form-group">
     <%= form.label :timing, "服用タイミング" %><br>
     <%= form.select :timing,
           Medication.timings.keys.map { |t|
@@ -43,7 +43,7 @@
   </div>
 
   <!-- 用途 -->
-  <div>
+  <div class="form-group">
     <%= form.label :purpose, "用途" %><br>
     <%= form.select :purpose,
           Medication.purposes.keys.map { |p|
@@ -59,14 +59,14 @@
   </div>
 
   <!-- 備考 -->
-  <div>
+  <div class="form-group">
     <%= form.label :note, "備考" %><br>
     <%= form.text_area :note, placeholder: "例: 食後30分以内に服用してください", rows: 4 %>
   </div>
 
   <br>
 
-  <div>
+  <div class="form-actions">
     <%= form.submit "保存する" %>
   </div>
 <% end %>

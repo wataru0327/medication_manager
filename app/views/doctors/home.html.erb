@@ -1,60 +1,30 @@
-<!-- app/views/doctors/home.html.erb -->
-
-<div style="max-width: 1000px; margin: 50px auto; text-align: center;">
+<div class="doctor-home">
 
   <!-- タイトル -->
-  <h1 style="font-size: 32px; font-weight: bold; color: #333; margin-bottom: 25px;">
+  <h1 class="doctor-home__title">
     医師用トップページ
   </h1>
 
   <!-- 挨拶 -->
-  <p style="font-size: 18px; color: #555; margin-bottom: 40px;">
+  <p class="doctor-home__greeting">
     <%= current_user.name %> さん、ようこそ！
   </p>
 
   <!-- 横並びカードメニュー -->
-  <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 120px;"> <!-- ← 下に余白を追加 -->
+  <div class="doctor-home__menu">
 
-    <%= link_to "🔲 QRコード作成", qrcode_search_prescriptions_path,
-          style: "flex: 1; min-width: 220px; max-width: 260px; padding: 25px;
-                  background: #f1f8ff; border: 2px solid #cce0ff; border-radius: 12px;
-                  font-size: 18px; color: #0056b3; font-weight: bold;
-                  text-decoration: none; text-align: center; transition: 0.3s;" %>
+    <%= link_to "🔲 QRコード作成", qrcode_search_prescriptions_path, class: "doctor-home__card doctor-home__card--blue" %>
 
-    <%= link_to "📝 処方箋作成", new_prescription_path,
-          style: "flex: 1; min-width: 220px; max-width: 260px; padding: 25px;
-                  background: #f9f9f9; border: 2px solid #ddd; border-radius: 12px;
-                  font-size: 18px; color: #333; font-weight: bold;
-                  text-decoration: none; text-align: center; transition: 0.3s;" %>
+    <%= link_to "📝 処方箋作成", new_prescription_path, class: "doctor-home__card doctor-home__card--gray" %>
 
-    <%= link_to "📋 処方箋一覧", prescriptions_path,
-          style: "flex: 1; min-width: 220px; max-width: 260px; padding: 25px;
-                  background: #fff8f1; border: 2px solid #ffe0cc; border-radius: 12px;
-                  font-size: 18px; color: #b35c00; font-weight: bold;
-                  text-decoration: none; text-align: center; transition: 0.3s;" %>
+    <%= link_to "📋 処方箋一覧", prescriptions_path, class: "doctor-home__card doctor-home__card--orange" %>
 
-    <%= link_to "💊 薬の登録", new_medication_path,
-          style: "flex: 1; min-width: 220px; max-width: 260px; padding: 25px;
-                  background: #f1fff5; border: 2px solid #ccffdd; border-radius: 12px;
-                  font-size: 18px; color: #006622; font-weight: bold;
-                  text-decoration: none; text-align: center; transition: 0.3s;" %>
+    <%= link_to "💊 薬の登録", new_medication_path, class: "doctor-home__card doctor-home__card--green" %>
 
-    <%= link_to "📑 薬一覧", medications_path,
-          style: "flex: 1; min-width: 220px; max-width: 260px; padding: 25px;
-                  background: #fff5f8; border: 2px solid #ffccd5; border-radius: 12px;
-                  font-size: 18px; color: #a30029; font-weight: bold;
-                  text-decoration: none; text-align: center; transition: 0.3s;" %>
+    <%= link_to "📑 薬一覧", medications_path, class: "doctor-home__card doctor-home__card--red" %>
 
   </div>
 </div>
-
-<!-- ✅ ホバーアニメーション -->
-<style>
-  a:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  }
-</style>
 
 
 

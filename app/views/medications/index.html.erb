@@ -1,15 +1,15 @@
-<p style="color: green"><%= notice %></p>
+<p class="notice-text"><%= notice %></p>
 
 <h1>薬一覧</h1>
 
 <!-- 🔍 検索フォーム -->
-<%= form_with url: medications_path, method: :get, local: true do |f| %>
-  <div style="margin-bottom: 10px;">
+<%= form_with url: medications_path, method: :get, local: true, html: { class: "search-form" } do |f| %>
+  <div class="form-group">
     <%= f.label :name, "薬名で検索" %>
     <%= f.text_field :name, value: params[:name], placeholder: "薬名を入力" %>
   </div>
 
-  <div style="margin-bottom: 10px;">
+  <div class="form-group">
     <%= f.label :purpose, "用途で検索" %>
     <%= f.select :purpose,
           options_for_select({
@@ -28,7 +28,7 @@
 <br>
 
 <% if @medications.any? %>
-  <table>
+  <table class="medication-table">
     <thead>
       <tr>
         <th>ID</th>
@@ -97,15 +97,16 @@
     </tbody>
   </table>
 <% else %>
-  <p style="color: red;">薬が見つかりませんでした。</p>
+  <p class="alert-text">薬が見つかりませんでした。</p>
 <% end %>
 
 <br>
 
-<div style="display: flex; gap: 10px;">
+<div class="action-links">
   <%= link_to "薬を新規登録", new_medication_path, class: "btn btn-success" %>
   <%= link_to "トップページへ", doctor_home_path, class: "btn btn-secondary" %>
 </div>
+
 
 
 

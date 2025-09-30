@@ -24,10 +24,10 @@ class User < ApplicationRecord
            dependent: :destroy,
            inverse_of: :pharmacy
 
-  # 👇 QRコード読み取り履歴
+  # QRコード読み取り履歴
   has_many :qr_scans, dependent: :destroy
 
-  # 👇 飲み忘れ防止チェック（服薬記録）
+  # 飲み忘れ防止チェック（服薬記録）
   has_many :medication_intakes, dependent: :destroy
 
   # バリデーション
