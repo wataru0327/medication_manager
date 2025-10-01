@@ -51,8 +51,6 @@
     <thead>
       <tr>
         <th>薬</th>
-        <th>服用量</th>
-        <th>タイミング</th>
         <th>日数</th>
         <th>操作</th>
       </tr>
@@ -63,13 +61,6 @@
           <td>
             <%= pm_form.collection_select :medication_id, Medication.all, :id, :name,
                 prompt: "薬を選択", class: "form-control" %>
-          </td>
-          <td>
-            <%= pm_form.text_field :dosage, placeholder: "例: 1錠", class: "form-control" %>
-          </td>
-          <td>
-            <%= pm_form.select :timing, Medication.timings.keys.map { |t| [t, t] },
-                prompt: "選択してください", class: "form-control" %>
           </td>
           <td>
             <%= pm_form.number_field :days, min: 1, class: "form-control text-center" %>
@@ -113,7 +104,7 @@
 
 <!-- 薬データをJS用に埋め込み -->
 <script>
-  window.medications = <%= Medication.all.map { |m| {id: m.id, name: m.name, dosage: m.dosage, timing: m.timing} }.to_json.html_safe %>;
+  window.medications = <%= Medication.all.map { |m| {id: m.id, name: m.name} }.to_json.html_safe %>;
 </script>
 
 <script>
@@ -142,21 +133,6 @@
               <select name="prescription[prescription_items_attributes][${timestamp}][medication_id]"
                       class="form-control" required>
                 <option value="">薬を選択</option>${options}
-              </select>
-            </td>
-            <td>
-              <input type="text" name="prescription[prescription_items_attributes][${timestamp}][dosage]"
-                     placeholder="例: 1錠" class="form-control" required>
-            </td>
-            <td>
-              <select name="prescription[prescription_items_attributes][${timestamp}][timing]"
-                      class="form-control" required>
-                <option value="">選択してください</option>
-                <option value="morning">morning</option>
-                <option value="noon">noon</option>
-                <option value="evening">evening</option>
-                <option value="bedtime">bedtime</option>
-                <option value="after_meal">after_meal</option>
               </select>
             </td>
             <td>

@@ -38,6 +38,15 @@ class PrescriptionsController < ApplicationController
 
     @prescription = Prescription.new(attrs)
 
+    # 💊 Medication から dosage / timing をコピー
+    @prescription.prescription_items.each do |item|
+      if item.medication_id.present?
+        med = Medication.find(item.medication_id)
+        item.dosage = med.dosage
+        item.timing = med.timing
+      end
+    end
+
     if @prescription.save
       redirect_to @prescription, notice: "処方箋を登録しました。"
     else
@@ -50,6 +59,13 @@ class PrescriptionsController < ApplicationController
     attrs = set_defaults(prescription_params)
 
     if @prescription.update(attrs)
+      # 💊 更新時もコピー
+      @prescription.prescription_items.each do |item|
+        if item.medication_id.present?
+          med = Medication.find(item.medication_id)
+          item.update(dosage: med.dosage, timing: med.timing)
+        end
+      end
       redirect_to @prescription, notice: "処方箋を更新しました。", status: :see_other
     else
       render :edit, status: :unprocessable_entity
@@ -170,6 +186,7 @@ class PrescriptionsController < ApplicationController
     attrs
   end
 end
+
 
 
 
