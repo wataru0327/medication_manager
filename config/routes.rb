@@ -72,9 +72,13 @@ Rails.application.routes.draw do
     end
   end
 
+  # 未ログイン時のみトップページを表示
   unauthenticated do
     root to: "home#index", as: :unauthenticated_root
   end
+
+  # Fallback root（RoutingError防止用）
+  root "home#index"
 
   get "up" => "rails/health#show", as: :rails_health_check
 end
