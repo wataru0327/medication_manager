@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
-# exit on error
 set -o errexit
 
 bundle install
 
-# DB 準備
-bundle exec rake db:prepare
+# DB migration のみ（prepare は使わない）
+bundle exec rake db:migrate
 
 # アセットコンパイル
 bundle exec rake assets:precompile
-bundle exec rake assets:clean
