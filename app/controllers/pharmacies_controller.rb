@@ -13,27 +13,32 @@ class PharmaciesController < ApplicationController
       @prescription = Prescription.find_by(qr_token: params[:token])
 
       if @prescription
-        # ✅ 履歴を保存（最新5件管理）
-        current_user.qr_scans.create!(
-          prescription: @prescription,
-          token: params[:token]
-        )
-        current_user.qr_scans.order(created_at: :desc).offset(5).destroy_all
-
-        # ✅ 最新ステータスを確認
-        latest_status = @prescription.status_updates.order(created_at: :desc).first
-
-        # ✅ completed 以外のときのみ accepted に更新
-        unless latest_status&.status == "completed"
-          StatusUpdate.create!(
+        # ✅ 有効期限切れチェック
+        if @prescription.expires_at.present? && @prescription.expires_at < Time.current
+          flash.now[:alert] = "この処方箋は有効期限切れのため受付できません"
+        else
+          # ✅ 履歴を保存（最新5件管理）
+          current_user.qr_scans.create!(
             prescription: @prescription,
-            pharmacy: current_user,
-            status: :accepted
+            token: params[:token]
           )
-        end
+          current_user.qr_scans.order(created_at: :desc).offset(5).destroy_all
 
-        redirect_to prescription_path(@prescription), notice: "処方箋を受付しました"
-        return
+          # ✅ 最新ステータスを確認
+          latest_status = @prescription.status_updates.order(created_at: :desc).first
+
+          # ✅ completed 以外のときのみ accepted に更新
+          unless latest_status&.status == "completed"
+            StatusUpdate.create!(
+              prescription: @prescription,
+              pharmacy: current_user,
+              status: :accepted
+            )
+          end
+
+          redirect_to prescription_path(@prescription), notice: "処方箋を受付しました"
+          return
+        end
       else
         flash.now[:alert] = "該当する処方箋が見つかりません"
       end
