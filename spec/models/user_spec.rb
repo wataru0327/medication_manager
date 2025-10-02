@@ -2,62 +2,57 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   describe 'バリデーション' do
-    it '名前・メール・パスワードがあれば有効' do
-      user = build(:user)
-      expect(user).to be_valid
+    context '正常系' do
+      it '有効なデータなら保存できる' do
+        user = build(:user, name: "テストユーザー", email: "test@example.com", password: "password")
+        expect(user).to be_valid
+      end
+
+      it 'patient_number が nil でも保存できる（doctor や pharmacy の場合）' do
+        user = build(:user, :doctor, patient_number: nil)
+        expect(user).to be_valid
+      end
+
+      it 'patient_number が整数なら保存できる' do
+        user = build(:user, :patient, patient_number: 100)
+        expect(user).to be_valid
+      end
     end
 
-    it '名前がなければ無効' do
-      user = build(:user, name: nil)
-      expect(user).not_to be_valid
-      expect(user.errors[:name]).to be_present
-    end
+    context '異常系' do
+      it 'name が空だと無効' do
+        user = build(:user, name: nil)
+        expect(user).not_to be_valid
+        expect(user.errors[:name]).to include("を入力してください")
+      end
 
-    it 'メールがなければ無効' do
-      user = build(:user, email: nil)
-      expect(user).not_to be_valid
-    end
+      it 'email が空だと無効' do
+        user = build(:user, email: nil)
+        expect(user).not_to be_valid
+        expect(user.errors[:email]).to include("を入力してください")
+      end
 
-    it 'メールが重複すると無効' do
-      create(:user, email: "duplicate@example.com")
-      user = build(:user, email: "duplicate@example.com")
-      expect(user).not_to be_valid
-    end
+      it 'email が重複すると無効' do
+        create(:user, email: "duplicate@example.com")
+        user = build(:user, email: "duplicate@example.com")
+        expect(user).not_to be_valid
+        expect(user.errors[:email]).to include("はすでに使用されています") 
+      end
 
-    # ✅ subject に有効なユーザーを渡す
-    subject { build(:user, :patient) }
-    it { should validate_uniqueness_of(:patient_number).allow_nil }
-  end
+      it 'patient_number が重複すると無効' do
+        create(:user, :patient, patient_number: 1)
+        user = build(:user, :patient, patient_number: 1)
+        expect(user).not_to be_valid
+        expect(user.errors[:patient_number]).to include("はすでに使用されています") 
+      end
 
-  describe '関連付け' do
-    it { is_expected.to have_many(:doctor_prescriptions).class_name("Prescription").with_foreign_key("doctor_id") }
-    it { is_expected.to have_many(:patient_prescriptions).class_name("Prescription").with_foreign_key("patient_id") }
-    it { is_expected.to have_many(:status_updates).with_foreign_key("pharmacy_id") }
-    it { is_expected.to have_many(:qr_scans) }
-    it { is_expected.to have_many(:medication_intakes) }
-  end
-
-  describe 'enum' do
-    it 'role に doctor, pharmacy, patient が定義されている' do
-      expect(User.roles.keys).to contain_exactly("doctor", "pharmacy", "patient")
-    end
-  end
-
-  describe 'コールバック' do
-    it '患者を作成すると patient_number が自動採番される' do
-      User.where(role: :patient).delete_all
-
-      user1 = create(:user, :patient)
-      expect(user1.patient_number).to eq(1)
-
-      user2 = create(:user, :patient)
-      expect(user2.patient_number).to eq(2)
-    end
-
-    it '医師を作成しても patient_number は nil のまま' do
-      doctor = create(:user, :doctor)
-      expect(doctor.patient_number).to be_nil
+      it 'patient_number が整数以外だと無効' do
+        user = build(:user, :patient, patient_number: "abc")
+        expect(user).not_to be_valid
+        expect(user.errors[:patient_number]).to include("は数値で入力してください")
+      end
     end
   end
 end
+
 

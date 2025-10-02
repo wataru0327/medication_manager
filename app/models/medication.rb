@@ -25,6 +25,16 @@ class Medication < ApplicationRecord
   validates :name, presence: true
   validates :dosage, presence: true
   validates :timing, presence: true
+  validates :purpose, presence: true
+
+  # ActiveStorage の画像必須チェック
+  validate :image_attached
+
+  private
+
+  def image_attached
+    errors.add(:image, "を選択してください") unless image.attached?
+  end
 end
 
 

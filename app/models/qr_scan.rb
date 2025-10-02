@@ -1,4 +1,3 @@
-
 class QrScan < ApplicationRecord
   belongs_to :user
   belongs_to :prescription

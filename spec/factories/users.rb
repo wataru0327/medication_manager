@@ -15,6 +15,7 @@ FactoryBot.define do
 
     trait :patient do
       role { :patient }
+      sequence(:patient_number) { |n| n }  
     end
   end
 end
