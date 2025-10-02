@@ -337,7 +337,7 @@ erDiagram
     int prescription_id FK
     string token
   }
----
+```
 
 ## セットアップ方法
 
