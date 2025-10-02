@@ -40,7 +40,9 @@
                       class: "btn btn-primary" %>
         </td>
         <td>
-          <% if prescription.expires_at < Time.current %>
+          <% if latest_status&.status == "completed" %>
+            <span style="color: green;">受け取り済みです</span>
+          <% elsif prescription.expires_at < Time.current %>
             <span style="color: red;">有効期限切れ</span>
           <% elsif latest_status.nil? || latest_status.status == "pending" %>
             <%= link_to "お薬を受け取る",
@@ -48,8 +50,6 @@
                         class: "btn btn-success" %>
           <% elsif latest_status.status == "accepted" || latest_status.status == "processing" %>
             <span style="color: orange;">準備中です。しばらくお待ちください</span>
-          <% elsif latest_status.status == "completed" %>
-            <span style="color: green;">受け取り済みです</span>
           <% end %>
         </td>
       </tr>
