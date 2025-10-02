@@ -97,7 +97,7 @@
      更新日時: <%= latest_status.created_at.strftime("%Y年%m月%d日 %H:%M") %>）
   </p>
 <% else %>
-  <p>まだステータスは設定されていません。</p>
+  <p>医師作成済み</p>
 <% end %>
 
 <hr>
@@ -115,7 +115,7 @@
           <%= latest_statuses[status].pharmacy&.name || "患者" %>：
           <%= case status
               when "pending"    then "患者が保有中"
-              when "accepted"   then "受付開始"
+              when "accepted"   then "薬局受付済み"
               when "processing" then "調剤開始"
               when "completed"  then "受け渡し"
               end %>

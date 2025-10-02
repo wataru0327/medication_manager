@@ -25,13 +25,13 @@
           <% if latest_status %>
             <%= case latest_status.status
                 when "pending"    then "保有中"
-                when "accepted"   then "受付済み"
+                when "accepted"   then "薬局受付済み"
                 when "processing" then "調剤中"
-                when "completed"  then "受け渡し完了"
+                when "completed"  then "薬受け取り済み"
                 else "保有中"
                 end %>
           <% else %>
-            保有中
+            医師作成済み
           <% end %>
         </td>
         <td>
