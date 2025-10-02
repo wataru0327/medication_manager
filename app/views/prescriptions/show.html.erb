@@ -164,14 +164,14 @@
   <div style="margin-top: 1em;">
     <% latest_status = @prescription.status_updates.order(created_at: :desc).first %>
 
-    <% if latest_status.nil? || latest_status.status == "pending" %>
+    <% if latest_status.nil? %>
       <%= button_to "この処方箋を受け取る",
                     receive_prescription_path(@prescription),
                     method: :post,
                     class: "btn btn-success",
                     data: { turbo_confirm: "この処方箋を受け取りますか？" } %>
     <% else %>
-      <button class="btn btn-secondary" disabled>この処方箋を受け取り済み</button>
+      <button class="btn btn-secondary" disabled>この処方箋は受け取り済み</button>
     <% end %>
   </div>
 
@@ -179,6 +179,7 @@
     <%= link_to "患者トップページへ戻る", patient_home_path, class: "btn btn-secondary" %>
   </div>
 <% end %>
+
 
 
 
