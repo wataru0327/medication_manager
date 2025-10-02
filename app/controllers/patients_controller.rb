@@ -12,7 +12,7 @@ class PatientsController < ApplicationController
   def received
     @received_prescriptions = Prescription
       .joins(:status_updates)
-      .where(patient_id: current_user.id, status_updates: { status: [:accepted, :processing, :completed] })
+      .where(patient_id: current_user.id, status_updates: { status: [:pending, :accepted, :processing, :completed] })
       .includes(:status_updates, prescription_items: [:medication])
       .order(issued_at: :desc)
       .distinct
