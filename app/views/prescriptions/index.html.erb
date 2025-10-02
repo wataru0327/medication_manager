@@ -26,14 +26,14 @@
           <% latest_status = prescription.status_updates.order(created_at: :desc).first %>
           <% if latest_status %>
             <%= case latest_status.status
-                when "pending"    then "保有中"
-                when "accepted"   then "受付済み"
+                when "pending"    then "患者が保有中"
+                when "accepted"   then "薬局受付済み"
                 when "processing" then "調剤中"
-                when "completed"  then "受け渡し完了"
+                when "completed"  then "薬の受け渡し完了"
                 else "保有中"
                 end %>
           <% else %>
-            医者作成済み
+            作成済み
           <% end %>
         </td> 
         <td>
