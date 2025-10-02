@@ -6,7 +6,7 @@
 <canvas id="canvas" hidden></canvas>
 
 <!-- QRコード読み取り結果を表示 -->
-<p id="result" style="margin-top: 1em; font-weight: bold; color: green;"></p>
+<p id="result" style="margin-top: 1em; font-weight: bold;"></p>
 
 <!-- 処方箋確認フォーム -->
 <%= form_with url: scan_qr_pharmacies_path, method: :get, local: true do %>
@@ -71,18 +71,24 @@
       if (code) {
         qrTokenInput.value = code.data; // hidden_field に格納
 
-        // ✅ Ajaxで患者名を取得
+        // ✅ Ajaxで有効性を確認
         fetch(`/prescriptions/find_by_token?token=${code.data}`)
           .then(response => response.json())
           .then(data => {
-            if (data.patient_name) {
+            if (data.error) {
+              resultEl.textContent = data.error;
+              resultEl.style.color = "red";
+            } else if (data.patient_name) {
               resultEl.textContent = `${data.patient_name}さんの処方箋のQRコードを読み取りました`;
+              resultEl.style.color = "green";
             } else {
               resultEl.textContent = "処方箋を確認しました (患者情報なし)";
+              resultEl.style.color = "orange";
             }
           })
           .catch(() => {
-            resultEl.textContent = "QRコードを読み取りました: " + code.data;
+            resultEl.textContent = "QRコードを読み取りましたが確認できませんでした。";
+            resultEl.style.color = "red";
           });
       }
     }

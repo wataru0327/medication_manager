@@ -111,9 +111,22 @@ class PrescriptionsController < ApplicationController
     redirect_to qrcode_prescription_path(@prescription)
   end
 
+  # ✅ QRコードから処方箋検索（有効期限チェック付き）
   def find_by_token
     prescription = Prescription.includes(:patient).find_by(qr_token: params[:token])
-    if prescription&.patient
+
+    if prescription.nil?
+      render json: { error: "処方箋が見つかりません" }, status: :not_found
+      return
+    end
+
+    # 有効期限切れチェック
+    if prescription.expires_at.present? && prescription.expires_at < Time.current
+      render json: { error: "処方箋の有効期限が切れています" }, status: :forbidden
+      return
+    end
+
+    if prescription.patient
       render json: { patient_name: prescription.patient.name }
     else
       render json: { patient_name: nil }
@@ -186,6 +199,7 @@ class PrescriptionsController < ApplicationController
     attrs
   end
 end
+
 
 
 

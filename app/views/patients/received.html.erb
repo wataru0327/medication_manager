@@ -40,7 +40,9 @@
                       class: "btn btn-primary" %>
         </td>
         <td>
-          <% if latest_status.nil? || latest_status.status == "pending" %>
+          <% if prescription.expires_at < Time.current %>
+            <span style="color: red;">有効期限切れ</span>
+          <% elsif latest_status.nil? || latest_status.status == "pending" %>
             <%= link_to "お薬を受け取る",
                         qrcode_prescription_path(prescription),
                         class: "btn btn-success" %>
@@ -54,7 +56,6 @@
     <% end %>
   </tbody>
 </table>
-
 
 
 
