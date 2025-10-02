@@ -5,20 +5,37 @@
 <table border="1" cellpadding="6" cellspacing="0">
   <thead>
     <tr>
+      <th>患者コード</th> 
       <th>患者名</th>
       <th>医師</th>
       <th>発行日</th>
       <th>有効期限</th>
+      <th>現在のステータス</th>
       <th>操作</th>
     </tr>
   </thead>
   <tbody>
     <% @prescriptions.each do |prescription| %>
       <tr>
+        <td><%= prescription.patient&.patient_number %></td>
         <td><%= prescription.patient&.name %></td>
         <td><%= prescription.doctor&.name %></td>
         <td><%= prescription.issued_at.strftime("%Y-%m-%d") if prescription.issued_at %></td>
         <td><%= prescription.expires_at.strftime("%Y-%m-%d") if prescription.expires_at %></td>
+        <td>
+          <% latest_status = prescription.status_updates.order(created_at: :desc).first %>
+          <% if latest_status %>
+            <%= case latest_status.status
+                when "pending"    then "保有中"
+                when "accepted"   then "受付済み"
+                when "processing" then "調剤中"
+                when "completed"  then "受け渡し完了"
+                else "保有中"
+                end %>
+          <% else %>
+            医者作成済み
+          <% end %>
+        </td> 
         <td>
           <%= link_to "詳細", prescription %> |
           <%= link_to "編集", edit_prescription_path(prescription) %> 
@@ -33,6 +50,7 @@
 
 <%= link_to "新しい処方箋を作成", new_prescription_path %> |
 <%= link_to "医師トップページへ戻る", doctor_home_path %>
+
 
 
 
