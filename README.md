@@ -101,7 +101,6 @@
 - **フレームワーク**: Ruby on Rails
 - **DB**: PostgreSQL
 - **QRコード生成**: rqrcode gem
-- **通知機能**: Action Mailer 
 - **デプロイ**: Render
 
 ---

@@ -8,11 +8,14 @@ class PatientsController < ApplicationController
 
   require "digest"
 
-  # 💊 受け取った処方箋一覧ページ（全ステータス表示）
+  # 💊 受け取った処方箋一覧ページ（保有中以上・新しい順）
   def received
     @received_prescriptions = Prescription
-      .where(patient_id: current_user.id) # ✅ 自分の処方箋だけ
+      .joins(:status_updates)
+      .where(patient_id: current_user.id, status_updates: { status: [:accepted, :processing, :completed] })
       .includes(:status_updates, prescription_items: [:medication])
+      .order(issued_at: :desc)
+      .distinct
   end
 
   # 💊 カレンダーページ表示用（完了済みのみ）
@@ -148,6 +151,7 @@ class PatientsController < ApplicationController
     "hsl(#{hue}, 70%, 80%)"
   end
 end
+
 
 
 
