@@ -6,6 +6,7 @@ class Prescription < ApplicationRecord
   has_many :prescription_items, dependent: :destroy
   has_many :medications, through: :prescription_items
   has_many :status_updates, dependent: :destroy
+  has_many :qr_scans, dependent: :destroy   
 
   accepts_nested_attributes_for :prescription_items, allow_destroy: true
 
