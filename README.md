@@ -261,10 +261,82 @@
 
 ---
 
-## ER図
+## ER図 (Mermaid)
 
-![ER図](./erd.png)
+```
+erDiagram
 
+  USERS ||--o{ PRESCRIPTIONS : "doctor_id / patient_id"
+  USERS ||--o{ STATUS_UPDATES : "pharmacy_id"
+  USERS ||--o{ QR_SCANS : ""
+  USERS ||--o{ MEDICATION_INTAKES : ""
+
+  PRESCRIPTIONS ||--o{ PRESCRIPTION_ITEMS : ""
+  PRESCRIPTIONS ||--o{ STATUS_UPDATES : ""
+  PRESCRIPTIONS ||--o{ QR_SCANS : ""
+
+  PRESCRIPTION_ITEMS ||--o{ MEDICATION_INTAKES : ""
+  PRESCRIPTION_ITEMS }o--|| MEDICATIONS : ""
+
+  MEDICATIONS {
+    int id PK
+    string name
+    string dosage
+    enum timing
+    enum purpose
+  }
+
+  USERS {
+    int id PK
+    string name
+    string email UNIQUE
+    string encrypted_password
+    enum role
+    int patient_number UNIQUE, NULL
+  }
+
+  PRESCRIPTIONS {
+    int id PK
+    int patient_id FK
+    int doctor_id FK
+    string patient_name
+    string hospital_name
+    string patient_code NULL
+    int patient_number NULL
+    date issued_at
+    date expires_at
+    string qr_token UNIQUE
+  }
+
+  PRESCRIPTION_ITEMS {
+    int id PK
+    int prescription_id FK
+    int medication_id FK
+    int days
+    string dosage NULL
+    string timing NULL
+  }
+
+  MEDICATION_INTAKES {
+    int id PK
+    int user_id FK
+    int prescription_item_id FK
+    datetime taken_at
+  }
+
+  STATUS_UPDATES {
+    int id PK
+    int prescription_id FK
+    int pharmacy_id FK NULL
+    enum status
+  }
+
+  QR_SCANS {
+    int id PK
+    int user_id FK
+    int prescription_id FK
+    string token
+  }
 ---
 
 ## セットアップ方法
@@ -275,7 +347,7 @@
 - PostgreSQL がインストールされていること
 
 ### 手順
-```bash
+```
 # リポジトリをクローン
 git clone https://github.com/yourname/medication_manager.git
 cd medication_manager
