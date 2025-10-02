@@ -33,7 +33,11 @@
           <td><%= prescription.doctor&.name %></td>
           <td><%= prescription.issued_at.strftime("%Y-%m-%d") if prescription.issued_at %></td>
           <td>
-            <%= link_to "処方箋を確認する", prescription_path(prescription), class: "btn btn-secondary" %>
+            <% if prescription.expires_at.present? && prescription.expires_at < Time.current %>
+              <span style="color: red;">有効期限切れ</span>
+            <% else %>
+              <%= link_to "処方箋を受け付ける", prescription_path(prescription), class: "btn btn-secondary" %>
+            <% end %>
           </td>
           <td>
             <%= button_to "この処方箋のQRコードを作成する",
@@ -51,6 +55,7 @@
 
 <br>
 <%= link_to "医師トップページへ戻る", doctor_home_path %>
+
 
 
 
