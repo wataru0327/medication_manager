@@ -310,10 +310,10 @@ erDiagram
   USERS {
     int id PK
     string name
-    string email UNIQUE
+    string email
     string encrypted_password
     enum role
-    int patient_number UNIQUE, NULL
+    int patient_number
   }
 
   PRESCRIPTIONS {
@@ -322,11 +322,11 @@ erDiagram
     int doctor_id FK
     string patient_name
     string hospital_name
-    string patient_code NULL
-    int patient_number NULL
+    string patient_code
+    int patient_number
     date issued_at
     date expires_at
-    string qr_token UNIQUE
+    string qr_token
   }
 
   PRESCRIPTION_ITEMS {
@@ -334,8 +334,8 @@ erDiagram
     int prescription_id FK
     int medication_id FK
     int days
-    string dosage NULL
-    string timing NULL
+    string dosage
+    string timing
   }
 
   MEDICATION_INTAKES {
@@ -348,7 +348,7 @@ erDiagram
   STATUS_UPDATES {
     int id PK
     int prescription_id FK
-    int pharmacy_id FK NULL
+    int pharmacy_id FK
     enum status
   }
 
