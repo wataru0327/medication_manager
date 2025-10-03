@@ -25,6 +25,27 @@
 
 ---
 
+## テスト用アカウント
+- **医師 (Doctor)**
+  - 名前 医師太郎
+  - 病院名 テスト病院
+  - ログイン用メールアドレス doctor@icloud.com
+  - パスワード 123456） 
+
+- **薬局 (Pharmacy)**
+  - 薬局名 テスト薬局
+  - ログイン用メールアドレス pharmacy@icloud.com
+  - パスワード 123456  
+
+- **患者 (Patient)**
+  - 名前 患者太郎
+  - ユーザー番号 ３
+  - ログイン用メールアドレス patient@icloud.com
+  - パスワード 123456
+
+---
+
+---
 ## データベース設計
 
 ### ApplicationRecord モデル設計図
@@ -263,7 +284,7 @@
 
 ## ER図 (Mermaid)
 
-```
+```mermaid
 erDiagram
 
   USERS ||--o{ PRESCRIPTIONS : "doctor_id / patient_id"
