@@ -30,7 +30,7 @@
   - 名前 医師太郎
   - 病院名 テスト病院
   - ログイン用メールアドレス doctor@icloud.com
-  - パスワード 123456） 
+  - パスワード 123456 
 
 - **薬局 (Pharmacy)**
   - 薬局名 テスト薬局
@@ -243,6 +243,11 @@
 ・status : 処方箋の状態（必須、enum 管理: 0=pending, 1=accepted, 2=processing, 3=completed）  
 ・created_at : 作成日時（Rails 自動付与）  
 ・updated_at : 更新日時（Rails 自動付与）  
+
+---
+## アプリ画面
+
+### 🔹①医者 薬を登録する（docs/医者薬の新規登録.png）
 
 ---
 
